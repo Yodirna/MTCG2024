@@ -35,8 +35,8 @@ public class SessionService implements Service {
             String token = TokenGenerator.generateToken();
             user.setAuthToken(token);
 
-            // Return the token in the response body
-            String responseBody = "{\"token\":\"" + token + "\"}";
+
+            String responseBody = "{\"token\":\"" + user.getUsername() +"-"+ token + "\"}";
             return new Response(200, "OK", responseBody);
         } else {
             return new Response(401, "Unauthorized", "{\"message\":\"Invalid username/password provided\"}");
