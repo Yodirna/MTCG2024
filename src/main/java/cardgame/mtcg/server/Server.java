@@ -1,10 +1,8 @@
 package cardgame.mtcg.server;
 
-
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import java.io.IOException;
 
 public class Server {
     private int port;
@@ -22,11 +20,10 @@ public class Server {
             while (isRunning) {
                 Socket clientSocket = serverSocket.accept();
                 // Handle client connection in a new thread
-                new Thread(new RequestHandler(clientSocket)).start();
+                new Thread(new ClientHandler(clientSocket)).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
-
