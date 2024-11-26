@@ -1,12 +1,5 @@
 package cardgame.mtcg.server;
 
-import cardgame.mtcg.models.*;
-import cardgame.mtcg.utils.TokenGenerator;
-import cardgame.mtcg.models.User;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import cardgame.mtcg.services.UserService;
 import cardgame.mtcg.services.SessionService;
 
