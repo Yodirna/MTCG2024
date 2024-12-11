@@ -4,7 +4,7 @@ import at.fhtw.httpserver.httpconfig.ContentType;
 import at.fhtw.httpserver.httpconfig.HttpStatus;
 import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
-import at.fhtw.mtcg.classes.MonsterCards.MonsterCard;
+import at.fhtw.mtcg.classes.Monsters.MonsterCard;
 import at.fhtw.mtcg.models.Card;
 import at.fhtw.mtcg.models.CardPackage;
 import at.fhtw.mtcg.database.UnitOfWork;

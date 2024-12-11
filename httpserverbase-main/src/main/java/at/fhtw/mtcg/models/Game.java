@@ -1,14 +1,14 @@
 package at.fhtw.mtcg.models;
 
-import at.fhtw.mtcg.classes.MonsterCards.Dragons.Dragon;
-import at.fhtw.mtcg.classes.MonsterCards.Elves.Elf;
-import at.fhtw.mtcg.classes.MonsterCards.Goblins.Goblin;
-import at.fhtw.mtcg.classes.MonsterCards.Knights.Knight;
-import at.fhtw.mtcg.classes.MonsterCards.Kraken.Kraken;
-import at.fhtw.mtcg.classes.MonsterCards.Orks.Ork;
-import at.fhtw.mtcg.classes.MonsterCards.Wizards.Wizard;
-import at.fhtw.mtcg.classes.SpellCards.Spell;
-import at.fhtw.mtcg.classes.SpellCards.WaterSpell;
+import at.fhtw.mtcg.classes.Monsters.Dragons.Dragon;
+import at.fhtw.mtcg.classes.Monsters.Elves.Elf;
+import at.fhtw.mtcg.classes.Monsters.Goblins.Goblin;
+import at.fhtw.mtcg.classes.Monsters.Knights.Knight;
+import at.fhtw.mtcg.classes.Monsters.Kraken.Kraken;
+import at.fhtw.mtcg.classes.Monsters.Orks.Ork;
+import at.fhtw.mtcg.classes.Monsters.Wizards.Wizard;
+import at.fhtw.mtcg.classes.Spells.Spell;
+import at.fhtw.mtcg.classes.Spells.WaterSpell;
 
 import java.util.ArrayList;
 import java.util.List;

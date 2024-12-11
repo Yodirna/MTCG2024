@@ -1,13 +1,13 @@
 package at.fhtw.mtcg.classes;
 
-import at.fhtw.mtcg.classes.MonsterCards.Dragons.*;
-import at.fhtw.mtcg.classes.MonsterCards.Elves.*;
-import at.fhtw.mtcg.classes.MonsterCards.Goblins.*;
-import at.fhtw.mtcg.classes.MonsterCards.Knights.*;
-import at.fhtw.mtcg.classes.MonsterCards.Kraken.*;
-import at.fhtw.mtcg.classes.MonsterCards.Orks.*;
-import at.fhtw.mtcg.classes.MonsterCards.Wizards.*;
-import at.fhtw.mtcg.classes.SpellCards.*;
+import at.fhtw.mtcg.classes.Monsters.Dragons.*;
+import at.fhtw.mtcg.classes.Monsters.Elves.*;
+import at.fhtw.mtcg.classes.Monsters.Goblins.*;
+import at.fhtw.mtcg.classes.Monsters.Knights.*;
+import at.fhtw.mtcg.classes.Monsters.Kraken.*;
+import at.fhtw.mtcg.classes.Monsters.Orks.*;
+import at.fhtw.mtcg.classes.Monsters.Wizards.*;
+import at.fhtw.mtcg.classes.Spells.*;
 import at.fhtw.mtcg.models.Card;
 
 import java.util.HashMap;
