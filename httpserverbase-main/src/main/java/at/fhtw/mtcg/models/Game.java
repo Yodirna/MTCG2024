@@ -1,14 +1,14 @@
 package at.fhtw.mtcg.models;
 
-import at.fhtw.mtcg.classes.Monsters.Dragons.Dragon;
-import at.fhtw.mtcg.classes.Monsters.Elves.Elf;
-import at.fhtw.mtcg.classes.Monsters.Goblins.Goblin;
-import at.fhtw.mtcg.classes.Monsters.Knights.Knight;
-import at.fhtw.mtcg.classes.Monsters.Kraken.Kraken;
-import at.fhtw.mtcg.classes.Monsters.Orks.Ork;
-import at.fhtw.mtcg.classes.Monsters.Wizards.Wizard;
-import at.fhtw.mtcg.classes.Spells.Spell;
-import at.fhtw.mtcg.classes.Spells.WaterSpell;
+import at.fhtw.mtcg.objects.Monsters.Dragons.Dragon;
+import at.fhtw.mtcg.objects.Monsters.Elves.Elf;
+import at.fhtw.mtcg.objects.Monsters.Goblins.Goblin;
+import at.fhtw.mtcg.objects.Monsters.Knights.Knight;
+import at.fhtw.mtcg.objects.Monsters.Kraken.Kraken;
+import at.fhtw.mtcg.objects.Monsters.Orks.Ork;
+import at.fhtw.mtcg.objects.Monsters.Wizards.Wizard;
+import at.fhtw.mtcg.objects.Spells.Spell;
+import at.fhtw.mtcg.objects.Spells.WaterSpell;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,17 +17,17 @@ public class Game {
 
     private List<String> battleLog = new ArrayList<>();
 
-    // getter fürs battle log
+    // Battle Log Getter
     public List<String> getBattleLog() {
         return battleLog;
     }
 
-    // Funktion um einen Log entry hinzufügen
+    // Function to add a log entry
     public void addLogEntry(String message) {
         battleLog.add(message);
     }
 
-    // battle log printen
+    // Print the battle log
     public void printBattleLog() {
         System.out.println("Battle Log:");
         for (String logEntry : battleLog) {
@@ -35,125 +35,123 @@ public class Game {
         }
     }
 
-    /////////////////////////////////////////////////////Fight Logic////////////////////////////////////////////////////////
     public void fight(Card card1, Card card2){
 
-        // Wenn beide Karten Spells sind
+        // If both cards are spells, then spell vs spell
         if (card1 instanceof Spell && card2 instanceof Spell) {
             spellVsSpellFight(card1, card2);
             addLogEntry("\n");
             return;
         }
 
-        // sonst checkt es ob mindestens eine der karten einen Spell ist
+        // If one of the cards is a spell, then spell vs monster
         if (card1 instanceof Spell || card2 instanceof Spell){
-            // wenn es einen spell gibt, dann Spell Vs Monster
+
             spellVsMonsterFight(card1, card2);
             addLogEntry("\n");
 
-            // sonst Monster Vs Monster
         }else{
-
+            // otherwise monster vs monster
             MonsterVsMonster(card1, card2);
+            // Add a new line to the battle log
             addLogEntry("\n");
         }
-        // und einen zeilenumbruch in den logs hinzufügen
 
     }
 
-    // funktion um den kampf durchzuführen bei spell vs spell
+    // Function to calculate the fight between two spells
     public void spellVsSpellFight(Card card1, Card card2){
         int spellVsSpell = spellVsSpell(card1, card2);
 
-        // karte 1 im nachteil
+        // Card 1 is at a disadvantage
         if (spellVsSpell == 1){
             DealDamage(card1, card2, card1.getDamage() / 2, card2.getDamage() * 2);
-            // karte 2 im nachteil
+            // Card 2 is at a disadvantage
         } else if (spellVsSpell == 2) {
             DealDamage(card1, card2, card1.getDamage() * 2, card2.getDamage() /2);
-            //gleichstand (beide haben dasselbe Element)
+            // Both cards are of the same element
         } else if (spellVsSpell == 3) {
             DealDamage(card1, card2, 0, 0);
-            // sonst ein fehler
+            // Error
         }else if (spellVsSpell == 5){
-            addLogEntry("ein fehler ist aufgetreten");
-            throw new RuntimeException("Ein fehler ist bei der Schadenkalkulation aufgetaucht");
+            addLogEntry("An error occurred");
+            throw new RuntimeException("An error occurred during damage calculation");
         }
         addLogEntry("\n");
     }
 
-    // funktion um den kampf durchzuführen bei spell vs monster
+    // Function to calculate the fight between a spell and a monster
     public void spellVsMonsterFight(Card card1, Card card2){
-        // Sonst ist eine Karte Monster
-        int returnn = SpellVsMonster(card1, card2);
+        // Otherwise, calculate the fight between a spell and a monster
+        int cases = SpellVsMonster(card1, card2);
 
-        // karte 1 im nachteil
-        if (returnn == 1){
+        // Card 1 is at a disadvantage
+        if (cases == 1){
             DealDamage(card1, card2, card1.getDamage() / 2, card2.getDamage() * 2);
-            // karte 2 im nachteil
-        } else if (returnn == 2) {
+            // Card 2 is at a disadvantage
+        } else if (cases == 2) {
             DealDamage(card1, card2, card1.getDamage() * 2, card2.getDamage() /2);
-            //karte 1 kein dmg
-        }else if (returnn == -1){
+            // Card 1 deals no damage
+        }else if (cases == -1){
             DealDamage(card1, card2, 0, card2.getDamage()); // das für karte 1
-            //Karte 2 kein dmg
-        }else if (returnn == -2){
+            // Card 2 deals no damage
+        }else if (cases == -2){
             DealDamage(card1, card2, card1.getDamage(), 0); // das für karte 2
-            // bei einem kraken
-        } else if (returnn == 3) {
-            //spell macht kein dmg
+            // Kraken special case
+        } else if (cases == 3) {
+            // Spell vs Kraken --> Kraken is immune to spells
             if (card1 instanceof Spell){
-                addLogEntry("The kraken is immune to Spells");
-                DealDamage(card1, card2, 0, card2.getDamage()); // das für karte 1
+                addLogEntry("The Kraken is immune to spells");
+                DealDamage(card1, card2, 0, card2.getDamage()); // for card 1
             }else{
-                addLogEntry("The kraken is immune to Spells");
-                DealDamage(card1, card2, card1.getDamage(), 0); // das für karte 2
+                addLogEntry("The Kraken is immune to spells");
+                DealDamage(card1, card2, card1.getDamage(), 0); // for card 2
             }
-        } else if (returnn == 4) {
+        } else if (cases == 4) {
             if (card1 instanceof WaterSpell){
-                addLogEntry("The Knight drowns because of the water Spell");
+                addLogEntry("The Knight drowns due to the water spell");
                 card2.setHp(0);
 
             } else if (card2 instanceof WaterSpell) {
-                addLogEntry("The Knight drowns because of the water Spell");
+                addLogEntry("The Knight drowns due to the water spell");
                 card1.setHp(0);
             }
         }
     }
 
-    // Die Funktion berechnet anhand der Elemente welche karte im Vor - und Nachteil ist.
+    // Function calculates who is at a disadvantage in a spell vs spell fight
     public int spellVsSpell(Card card1, Card card2){
-        // wenn beide karten dasselbe element haben, dann beide karten kein dmg
+        // if both cards are of the same element, then both are at a disadvantage
         if (card1.getElement() == card2.getElement()){
             return 3;
         }
 
-        // wenn karte 1 feuer ist
+        // if card 1 is fire
         if (card1.getElement() == Card.Elements.Fire){
-            // gegen regular, ist karte 2 im nachteil
+            // against normal, card 2 is at a disadvantage
             if (card2.getElement() == Card.Elements.Normal){
                 return 2;
-                // gegen wasser, ist karte 1 im nachteil
+                // against water, card 1 is at a disadvantage
             } else if (card2.getElement() == Card.Elements.Water) {
                 return 1;
             }
 
             // Water
         } else if (card1.getElement() == Card.Elements.Water) {
-            // gegen feuer, ist karte 2 im nachteil
+            // against fire, card 2 is at a disadvantage
             if (card2.getElement() == Card.Elements.Fire){
                 return 2;
-                // gegen normal, ist karte 1 im nachteil
+                // against normal, card 1 is at a disadvantage
             } else if (card2.getElement() == Card.Elements.Normal) {
                 return 1;
             }
 
-            // Regular
+            // Normal
         } else if (card1.getElement() == Card.Elements.Normal) {
-            // gegen wasser, karte 2 im nachteil
+            // against water, card 2 is at a disadvantage
             if ( card2.getElement() == Card.Elements.Water){
                 return 2;
-                // gegen feuer, karte 1 im nachteil
+                // against fire, card 1 is at a disadvantage
             } else if (card2.getElement() == Card.Elements.Fire){
                 return 1;
             }
@@ -162,75 +160,75 @@ public class Game {
         return 5;
     }
 
-    // Funktion um monster gegen monster kämpfen zu lassen
+    // Function to calculate the fight between two monsters
     public void MonsterVsMonster(Card card1, Card card2){
-        // dann die spezial fälle durchgehen
+        // Special cases
         boolean goblinvsdragon = goblinVsDragonCheck(card1, card2);
         boolean wizzardVsOrk = wizzardVsOrk(card1, card2);
         boolean fireElvesVsDragon = fireElvesVsDragon(card1, card2);
 
-        // wenn ein goblin gegen einen drachen kämpft --> special case, goblin hat angst
+        // Goblin vs Dragon special case --> Goblin is too afraid to attack the Dragon
         if (goblinvsdragon){
             addLogEntry("The Goblin is too afraid to attack the Dragon!");
-            // wenn karte 1 der Goblin ist, dann kein dmg
+            // If card 1 is the Goblin, then it deals no damage
             if (card1 instanceof Goblin){
                 DealDamage(card1, card2, 0, card2.getDamage());
-                //sonst karte 2 kein dmg
+                // otherwise card 2 deals no damage
             }else{
                 DealDamage(card1, card2, card1.getDamage(), 0);
             }
 
-            // wenn ein Wizzard gegen einen Ork kämpft --> special case, Wizzard controls ork
+            // If a wizard fights an Ork, the wizard can control the Ork
         } else if (wizzardVsOrk) {
             addLogEntry("Wizzards can control Orks!");
-            // wenn karte 1 der Ork ist, dann kein dmg
+            // If card 1 is the Ork, then it deals no damage
             if (card1 instanceof Ork){
                 DealDamage(card1, card2, 0, card2.getDamage());
-                //sonst karte 2 kein dmg
+                // otherwise card 2 deals no damage
             }else{
                 DealDamage(card1, card2, card1.getDamage(), 0);
             }
 
-            // wenn ein Fire elf gegen einen drachen kämpft --> special case, fire elf evades dragon attack
+            // If a fire elf fights a dragon, the fire elf can evade the dragon's attack
         } else if (fireElvesVsDragon) {
             addLogEntry("The Fire Elf evaded the Dragon's Attack!");
-            // wenn karte 1 der Drache ist, dann kein dmg
+            // If card 1 is the dragon, then it deals no damage
             if (card1 instanceof Dragon){
                 DealDamage(card1, card2, 0, card2.getDamage());
-                //sonst karte 2 kein dmg
+                // otherwise card 2 deals no damage
             }else{
                 DealDamage(card1, card2, card1.getDamage(), 0);
             }
 
-            // sonst ganz normaler kampf
+            // otherwise normal fight
         }else {
             DealDamage(card1, card2, card1.getDamage(), card2.getDamage());
         }
     }
 
-    // Funktion wenn ein monster gegen einen Spell kämpft
+    // Function to calculate the fight between a spell and a monster
     public  int SpellVsMonster(Card card1, Card card2){
 
-        // Kraken vs Spell special Case --> Kraken ignoriert dmg
+        // Kraken vs Spell special Case --> Kraken is immune to spells
         boolean krakenCheck = krakenVsSpells(card1, card2);
         if (krakenCheck){
             return 3;
         }
 
-        // Knights vs WaterSpell special case --> Knight ertrinkt
+        // Knights vs WaterSpell special case --> Knight drowns due to the water spell
         boolean KnightVsWaterSpell = waterSpellVsKnight(card1, card2);
         if (KnightVsWaterSpell){
             return 4;
         }
 
-        // wenn zb ein feuer monster einen feuerspell angreift, dann kriegt der spell kein dmg
+        // If a fire monster attacks a fire spell, the spell takes no damage
         if (card1 instanceof Spell){
             if (card1.getElement() == card2.getElement()){
                 return -1;
             }
         }
 
-        // wenn zb ein feuer monster einen feuerspell angreift, dann kriegt der spell kein dmg
+        // If a fire spell attacks a fire spell, the spell takes no damage
         if (card2 instanceof Spell){
             if (card2.getElement() == card1.getElement()){
                 return -2;
@@ -238,14 +236,14 @@ public class Game {
         }
 
 
-        // sonst alle elemente einzeln überprüfen
+        // check elements one by one
         if (card1.getElement() == Card.Elements.Fire){
             if (card2.getElement() == Card.Elements.Normal){
                 return 2;
             } else if (card2.getElement() == Card.Elements.Water) {
                 return 1;
             }
-            // Water vs Feuer -> dmg doppel
+            // water against fire -> double dmg
         } else if (card1.getElement() == Card.Elements.Water) {
             if (card2.getElement() == Card.Elements.Fire){
                 return 2;
@@ -253,7 +251,7 @@ public class Game {
                 return 1;
             }
 
-            // Normal vs Water -> dmg doppel
+            // normal against water -> double dmg
         } else if (card1.getElement() == Card.Elements.Normal) {
             if ( card2.getElement() == Card.Elements.Water){
                 return 2;
