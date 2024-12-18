@@ -29,78 +29,78 @@ public class PackageService {
     public Response handlePostRequest(Request request) {
 
         try {
-            //token holen
+            // Get Token from header
             String token = request.getAuthorizationToken();
 
             boolean allTokenChecks = validateToken(token);
             if (!allTokenChecks){
-                String response = "Access token is missing or invalid";
+                String response = "Access token is missing or invalid!";
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
             }
 
-            // isAdmin vom token extrahieren
+            // extra check if the user is an admin
             boolean isAdmin = token.contains("admin");
 
-            // nur wenn der Benutzer ein admin ist, dann kann man einen package erstellen
+            // only admins can create packages
             if (isAdmin){
-                // body lesen
+                // read the body of the request
                 String bodyString = request.getBody();
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode requestBody = mapper.readTree(bodyString);
 
 
                 try {
-                    // erstellt einen Liste von cards
+                    // create a vector of cards
                     List<Card> cards = new ArrayList<>();
 
                     for (JsonNode node : requestBody) {
-                        //holt die daten der Karten
+                        // get the card information from the request body
                         String cardID = node.get("Id").asText();
                         String cardName = node.get("Name").asText();
                         int cardDamage = node.get("Damage").asInt();
                         Card.Elements cardElement = getCardElement(cardName);
 
-                        // erstellt aus dem request body karten und fügt sie im vector ein
+                        // creates cards out of the information
                         Card cardToAdd = new MonsterCard(cardName, cardElement, cardDamage, 100);
 
-                        // das unten ist extra wegen constructor
+                        // constructs the card
                         cardToAdd.setId(cardID);
                         cards.add(cardToAdd);
                     }
-                    // erstelle einen package model
+
                     CardPackage packageProvided = new CardPackage(cards);
 
                     if (cards.size() < 5){
-                        String response = "Beim Package erstellen müssen 5 karten gesetzt sein!";
+                        String response = "When creating a package, you need to provide at least 5 cards!";
                         return new Response(HttpStatus.UNAUTHORIZED, ContentType.PLAIN_TEXT, response);
                     }
 
+                    // Opens repository, creates the cards in the DB and then the package
 
-                    // macht repo auf, und erstellt die Karten in der DB und dann anschließend das Package
                     boolean checkIfAnyCardIsInDB = packagesRepository.checkIfAnyPackageCardsAlreadyExists(cards);
                     if (checkIfAnyCardIsInDB){
-                        String response = "At Least One of the provided Cards are already in Database";
+                        String response = "At least one of the cards already exists in the Database!";
                         return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, response);
                     }
 
 
                     boolean cardsToDb = packagesRepository.addPackageCardsToDB(cards);
                     if (!cardsToDb){
-                        String response = "Couldnt add the cards to the Database";
+                        String response = "Couldn't add the cards to the Database!";
                         return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, response);
                     }
 
                     boolean packageToDb = packagesRepository.addPackageToDB(cards);
                     if (!packageToDb){
-                        String response = "Couldnt create the Package in the Database";
+                        String response = "Couldn't create the package in the Database!";
                         return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, response);
                     }
 
-                    String response = "Package and cards successfully created";
+                    String response = "Package and cards successfully created!";
                     return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, response);
                 }catch (Exception e){
                     e.printStackTrace();
-                    String response = "Ein fehler ist beim erstellen der Karten oder package ist unterlaufen!";
+                    String response = "An error occurred while creating the package or cards!";
                     return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, response);
                 }
             }else{
@@ -110,7 +110,7 @@ public class PackageService {
 
         }catch (Exception e){
             e.printStackTrace();
-            String response = "Ein unerwarteter Fehler!";
+            String response = "An unexpected error occurred!";
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.PLAIN_TEXT, response);
         }
 

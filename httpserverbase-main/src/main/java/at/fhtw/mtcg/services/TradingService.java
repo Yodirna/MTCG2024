@@ -30,7 +30,7 @@ public class TradingService {
 
         // Validate the extracted token to ensure it is correct and not expired
         if (token == null || !BearerToken.validateToken(token)) {
-            String response = "Invalid Token";
+            String response = "Invalid Token!";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
         }
         // Retrieve the user’s ID based on the token’s information
@@ -49,7 +49,7 @@ public class TradingService {
 
         // If the trade deal does not exist, respond with an appropriate error
         if (!checkIfDealExists){
-            String response = "The provided deal ID was not found.";
+            String response = "The provided deal ID was not found!";
             return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, response);
         }
 
@@ -84,7 +84,7 @@ public class TradingService {
 
             // Validate the token to ensure the user is authorized to create a trade
             if (token == null || !BearerToken.validateToken(token)) {
-                String response = "Invalid Token";
+                String response = "Invalid Token!";
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
             }
 
@@ -139,18 +139,18 @@ public class TradingService {
 
             // If any of these checks fail, respond with the appropriate error messages
             if (isDealIdTaken){
-                String response = "A deal with this deal ID already exists.";
+                String response = "A deal with this deal ID already exists!";
                 return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, response);
             }
 
             if (isCardLockedInUsersDeck){
-                String response = "The Card is locked in the user's Deck";
+                String response = "The Card is locked in the user's Deck!";
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
 
             }
 
             if (!doesUserOwnCard){
-                String response = "User does not own the specified card";
+                String response = "User does not own the specified card!";
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
             }
 
@@ -159,17 +159,17 @@ public class TradingService {
 
             // Respond accordingly based on whether the trade was successfully created
             if (isTradeCreated){
-                String response = "Trading deal successfully created";
+                String response = "Trading deal successfully created!";
                 return new Response(HttpStatus.CREATED, ContentType.PLAIN_TEXT, response);
             }else {
-                String response = "Trade deal could not be created";
+                String response = "Trade deal could not be created!";
                 return new Response(HttpStatus.NOT_FOUND, ContentType.PLAIN_TEXT, response);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
         // If an unexpected error occurs, inform the client
-        String response = "Unexpected error occurred";
+        String response = "Unexpected error occurred!";
         return new Response(HttpStatus.NOT_FOUND, ContentType.PLAIN_TEXT, response);
     }
 
@@ -221,13 +221,13 @@ public class TradingService {
 
         // If any of these checks fail, respond with an appropriate error
         if (!checkIfdealExists){
-            String response = "The provided deal ID was not found.";
+            String response = "The provided deal ID was not found!";
             return new Response(HttpStatus.NOT_FOUND, ContentType.PLAIN_TEXT, response);
 
         }
 
         if (!doesUserOwnCard){
-            String response = "The deal contains a card that is not owned by the user.";
+            String response = "The deal contains a card that is not owned by the user!";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
 
         }
@@ -235,11 +235,11 @@ public class TradingService {
         // If all checks pass, proceed to delete the trade from the database
         boolean deleteTrade = tradingRepository.deleteTrade(tradeID, new UnitOfWork());
         if (deleteTrade){
-            String response = "Trading deal successfully deleted";
+            String response = "Trading deal successfully deleted!";
             return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, response);
 
         }else{
-            String response = "An unexpected error occurred while deleting the deal";
+            String response = "An unexpected error occurred while deleting the deal!";
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.PLAIN_TEXT, response);
 
         }

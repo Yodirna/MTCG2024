@@ -1,10 +1,14 @@
 package at.fhtw.mtcg.models;
+import lombok.Setter;
+
 import java.lang.*;
 
 
+@Setter
 public class Card {
     private int hp;
     private int damage;
+    //Setter
     private String name;
     private Elements element;
     private String id;
@@ -37,10 +41,6 @@ public class Card {
         this.hp = CardHp;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     //Getter
     public String getName(){
         return this.name;
@@ -57,20 +57,6 @@ public class Card {
     }
     public String getID(){
         return this.id;
-    }
-
-    //Setter
-    public void setName(String name){
-        this.name = name;
-    }
-    public void setElement(Elements element){
-        this.element = element;
-    }
-    public void setHp(int HP){
-        this.hp = HP;
-    }
-    public void setDamage(int damage){
-        this.damage = damage;
     }
 
 }

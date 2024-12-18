@@ -86,6 +86,7 @@ public class CardRepository {
             e.printStackTrace();
 
         }
+        // If the card is not found, return a default card
         return new Card("0", Card.Elements.Fire,0,0);
     }
 
@@ -96,7 +97,7 @@ public class CardRepository {
             PreparedStatement getCardsStmt = unitOfWork.prepareStatement(getCardsQuery);
             getCardsStmt.setInt(1, userID);
             ResultSet ResultSet = getCardsStmt.executeQuery();
-            //speichert die Card IDS in einem String vektor
+            // save all the card IDs in a vector
             Vector<String> cardIDs = new Vector<>();
 
             while(ResultSet.next()){

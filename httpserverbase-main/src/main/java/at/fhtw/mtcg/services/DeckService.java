@@ -23,10 +23,10 @@ public class DeckService {
 
 
     public Response handleGetReq(Request request) {
-        // Token von header holen
+        // Get the token from the header
         String token = request.getAuthorizationToken();
 
-        // Token validieren
+        // validate the token
         if (!BearerToken.validateToken(token)) {
             String response = "Invalid Token";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
@@ -34,16 +34,16 @@ public class DeckService {
 
         if (token.contains("altenhof")){
 
-            // Holt eine Liste mit Karten vom gegebenen Username
+            // gets a list of cards from the given username
             List<Card> deck = deckRepository.getDeck("altenhof");
             String format = request.getFormat();
-            // wenn es keinen deck gibt dann 204 zurück
+            // no deck found, return 204
             if (deck.toString().equals("[]")){
                 return new Response(HttpStatus.NO_CONTENT);
             }
 
             String response;
-            // Wenn das Format Plain angegeben wurde --> formatAsPlainText funktion wird aufgerufen
+            // if format plain is given, call formatAsPlainText function
             if (format == null){
                 response = deckRepository.createJsonForAllCards(deck).toString();
                 return new Response(HttpStatus.OK, ContentType.JSON, response);
@@ -59,17 +59,17 @@ public class DeckService {
 
 
         }else if (token.contains("kienboec")){
-            // Holt eine Liste mit Karten vom gegebenen Username
+            // gets a list of cards from the given username
             List<Card> deck = deckRepository.getDeck("kienboec");
 
-            // wenn es keinen deck gibt dann 204 zurück
+            // no deck found, return 204
             if (deck.toString().equals("[]")){
                 return new Response(HttpStatus.NO_CONTENT, ContentType.PLAIN_TEXT, "No Deck");
             }
 
             String response;
             String format = request.getFormat();
-            // Wenn das Forma't Plain angegeben wurde --> formatAsPlainText funktion wird aufgerufen
+            // if format plain is given, call formatAsPlainText function
             if ("plain".equals(format)) {
                 response = formatAsPlainText(deck);
                 return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, response);
@@ -87,7 +87,7 @@ public class DeckService {
     }
 
 
-    //Funktion um dem Plain Test zu schaffen
+    // function to format the deck as plain text
     private String formatAsPlainText(List<Card> deck) {
         StringBuilder response = new StringBuilder();
         for (Card card : deck) {
@@ -105,10 +105,10 @@ public class DeckService {
             String bodyString = request.getBody();
             ObjectMapper mapper = new ObjectMapper();
             JsonNode requestBody = mapper.readTree(bodyString);
-            // einen String Vector erstellen, um die IDS aus dem Body zu speichern
+            // save ids from body in vector
             Vector<String> cardsToConfigure = new Vector<>();
 
-            // for schleife um die Ids zu iterieren
+            // loop to iterate ids
             if (requestBody.isArray()) {
                 for (JsonNode element : requestBody) {
                     if (element.isTextual()) {
@@ -117,28 +117,28 @@ public class DeckService {
                 }
             }
 
-            // wenn die anzahl der karten nicht 4 ist
+            // if the size of the cards to configure is not 4, return 400
             if (cardsToConfigure.size() != 4){
                 String response = "The provided deck did not include the required amount of cards";
                 return new Response(HttpStatus.BAD_REQUEST, ContentType.PLAIN_TEXT, response);
             }
 
 
-            // Token von header holen
+            // get the token from the header
             String token = request.getAuthorizationToken();
 
-            // Token validieren
+            // validate the token
             if (!BearerToken.validateToken(token)) {
                 String response = "Invalid Token";
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
             }
 
-            // user manager erstellt um die user id zu holen
+            // created usermanager to get the user id
             UserRepository userManager = new UserRepository(new UnitOfWork());
 
             if (token.contains("altenhof")){
 
-                //überprüfen, ob der user alle karten besitzt
+                // check if the user owns all the cards
                 int userID = userManager.getUserID("altenhof");
                 boolean checkIfUserOwnsAllCards = deckRepository.checkProvidedCardsWithAcquiredCardsInDB(userID,cardsToConfigure);
 
@@ -156,9 +156,9 @@ public class DeckService {
                         }
                     }
                 }
-                // Configure Deck funktion wird aufgerufen
+                // configure deck function is called
                 boolean response = deckRepository.configureDeck("altenhof", cardsToConfigure);
-                //je nach Response, etwas zurückschicken
+                // send back a response based on the response value
                 if (response){
 
                     return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "Cards have been added to deck");
@@ -167,7 +167,7 @@ public class DeckService {
                 }
 
             }else if (token.contains("kienboec")){
-                //überprüfen, ob der user alle karten besitzt
+                // check if the user owns all the cards
                 int userID = userManager.getUserID("kienboec");
                 boolean checkIfUserOwnsAllCards = deckRepository.checkProvidedCardsWithAcquiredCardsInDB(userID,cardsToConfigure);
 
@@ -175,23 +175,23 @@ public class DeckService {
                     String response = "At least one of the provided cards does not belong to the user or is not available.";
                     return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
                 }
-                // Configure Deck funktion wird aufgerufen
+                // configure deck function is called
                 boolean response = deckRepository.configureDeck("kienboec", cardsToConfigure);
-                //je nach Response, etwas zurückschicken
+                // send back a response based on the response value
                 if (response){
-                    return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "cards succesffully added to deck");
+                    return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "Cards succesffully added to deck");
                 }
-                String msg = "Unerwarteter Fehler";
+                String msg = "Unexpected Error";
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, msg);
 
             }else{
-                String response = "Unerwarteter Fehler";
-                return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "Ein unerwarteter fehler ist aufgetreten");
+                String response = "Unexpected Error";
+                return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "An unexpected error occurred");
 
             }
         }catch (Exception e){
             e.printStackTrace();
-            String msg = "Unerwarteter Fehler";
+            String msg = "Unexpected Error";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, msg);
         }
 

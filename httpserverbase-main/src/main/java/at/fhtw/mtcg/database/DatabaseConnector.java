@@ -15,7 +15,7 @@ public enum DatabaseConnector {
                     "postgres",
                     "postgres");
         } catch (SQLException e) {
-            throw new DataAccessError("Datenbankverbindungsaufbau nicht erfolgreich", e);
+            throw new DBAccessError("Datenbankverbindungsaufbau nicht erfolgreich", e);
         }
     }
 }

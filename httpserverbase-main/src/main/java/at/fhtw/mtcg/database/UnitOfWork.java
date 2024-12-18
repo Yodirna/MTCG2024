@@ -19,7 +19,7 @@ public class UnitOfWork implements AutoCloseable{
         try {
             this.connection.setAutoCommit(false);
         } catch (SQLException e) {
-            throw new DataAccessError("Autocommit nicht deaktivierbar", e);
+            throw new DBAccessError("Autocommit nicht deaktivierbar", e);
         }
     }
 
@@ -33,7 +33,7 @@ public class UnitOfWork implements AutoCloseable{
                 this.connection.commit();
                 commands = new ArrayList<>();
             } catch (SQLException e) {
-                throw new DataAccessError("Commit der Transaktion nicht erfolgreich", e);
+                throw new DBAccessError("Commit der Transaktion nicht erfolgreich", e);
             }
         }
     }
@@ -43,7 +43,7 @@ public class UnitOfWork implements AutoCloseable{
             try {
                 this.connection.rollback();
             } catch (SQLException e) {
-                throw new DataAccessError("Rollback der Transaktion nicht erfolgreich", e);
+                throw new DBAccessError("Rollback der Transaktion nicht erfolgreich", e);
             }
         }
     }
@@ -55,7 +55,7 @@ public class UnitOfWork implements AutoCloseable{
                 this.connection.close();
                 this.connection = null;
             } catch (SQLException e) {
-                throw new DataAccessError("Schließen der Connection nicht erfolgreich", e);
+                throw new DBAccessError("Schließen der Connection nicht erfolgreich", e);
             }
         }
     }
@@ -66,10 +66,10 @@ public class UnitOfWork implements AutoCloseable{
             try {
                 return this.connection.prepareStatement(sql);
             } catch (SQLException e) {
-                throw new DataAccessError("Erstellen eines PreparedStatements nicht erfolgreich", e);
+                throw new DBAccessError("Erstellen eines PreparedStatements nicht erfolgreich", e);
             }
         }
-        throw new DataAccessError("UnitOfWork hat keine aktive Connection zur Verfügung");
+        throw new DBAccessError("UnitOfWork hat keine aktive Connection zur Verfügung");
     }
 
     public void registerNew(PreparedStatement stmt) {

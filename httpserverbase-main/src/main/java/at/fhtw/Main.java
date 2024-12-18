@@ -31,8 +31,6 @@ public class Main {
         router.addService("/tradings", new TradingController());
         router.addService("/rewards", new RewardController());
 
-
-
         return router;
     }
 }

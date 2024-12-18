@@ -8,7 +8,7 @@ public class Hash {
     private static final String ALGORITHM = "SHA-256";
     private static final int SALT_LENGTH = 16; // Länge des Salzes in Bytes
 
-    // Methode zum Generieren eines zufälligen Salzes
+    // Generate a random salt
     private static byte[] generateSalt() {
         byte[] salt = new byte[SALT_LENGTH];
         SecureRandom random = new SecureRandom();
@@ -16,7 +16,7 @@ public class Hash {
         return salt;
     }
 
-    // Methode zum Hashen eines Passworts mit Salz
+    // Hash a password with a random salt
     public static String hashPassword(String password) {
         try {
             byte[] salt = generateSalt();
@@ -25,12 +25,12 @@ public class Hash {
             digest.update(salt);
             byte[] hash = digest.digest(password.getBytes());
 
-            // Das gesalzene Passwort und das Hash kombinieren
+            // Combine salt and hash
             byte[] saltedHash = new byte[salt.length + hash.length];
             System.arraycopy(salt, 0, saltedHash, 0, salt.length);
             System.arraycopy(hash, 0, saltedHash, salt.length, hash.length);
 
-            // In einen hexadezimalen String umwandeln
+            // Convert salted hash to hex string
             StringBuilder hexString = new StringBuilder();
             for (byte b : saltedHash) {
                 hexString.append(String.format("%02x", b));
@@ -41,7 +41,7 @@ public class Hash {
         }
     }
 
-    // Methode zum Überprüfen eines Passworts gegen einen gespeicherten Hash
+    // Verify a password against a hashed password
     public boolean verifyPassword(String password, String hashedPassword) {
         try {
             byte[] saltedHash = new byte[hashedPassword.length() / 2];
@@ -57,7 +57,7 @@ public class Hash {
             digest.update(salt);
             byte[] hash = digest.digest(password.getBytes());
 
-            // Passwort hashen und mit dem gespeicherten Hash vergleichen
+            // Hash password and compare with stored hash
             for (int i = 0; i < hash.length; i++) {
                 if (hash[i] != saltedHash[i + SALT_LENGTH]) {
                     return false;

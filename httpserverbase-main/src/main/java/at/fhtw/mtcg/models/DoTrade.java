@@ -50,7 +50,7 @@ public class DoTrade {
             tradingRepository.deleteTrade(tradeID, unitOfWork);
             unitOfWork.commitTransaction();
 
-            String response = "trade succesfully done!";
+            String response = "Trade succesfully done!";
             return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, response);
 
 

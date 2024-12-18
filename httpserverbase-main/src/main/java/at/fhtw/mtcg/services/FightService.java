@@ -32,7 +32,7 @@ public class FightService {
     public synchronized void handlePostReq(Request request) {
         String token = request.getAuthorizationToken();
         if (!BearerToken.validateToken(token)) {
-            pendingResponses.put(request, new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "Invalid Token"));
+            pendingResponses.put(request, new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "Invalid Token!"));
             return;
         }
 
@@ -50,7 +50,7 @@ public class FightService {
 
             pendingResponses.put(request1, new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, String.join("\n", battleLogs)));
             pendingResponses.put(request2, new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, String.join("\n", battleLogs)));
-            // Benachrichtige den Controller, dass die Antworten bereit sind
+            // Notify all waiting threads that the response is available
             notifyAll();
         }
     }
@@ -58,10 +58,10 @@ public class FightService {
     public synchronized Response getResponseForRequest(Request request) {
         while (!pendingResponses.containsKey(request)) {
             try {
-                wait(); // Warte, bis die Antwort verfügbar ist
+                wait(); // Wait until the response is available
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                return new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.PLAIN_TEXT, "An error occurred");
+                return new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.PLAIN_TEXT, "An error occurred!");
             }
         }
         return pendingResponses.remove(request);
@@ -70,7 +70,7 @@ public class FightService {
     public User createUserModel(String username, User player){
         DeckRepository deckRepository = new DeckRepository(new UnitOfWork());
         List<Card> deck = deckRepository.getDeck(username);
-        // die karten im user model speichern
+        // Save the cards in the player model
         for (Card card: deck) {
             Card realCard = createRealCard(card);
             player.addCardToStack(realCard);
@@ -83,11 +83,11 @@ public class FightService {
         try{
             Game game = new Game();
 
-            // alle daten vom spieler im model speichern, also card stack etc.
+            // Save all the data of the player in the model, so card stack etc.
             player1 = createUserModel("kienboec", player1);
             player2 = createUserModel("altenhof", player2);
 
-            // 4 runden --> pro karte eine runde fight
+            // 4 rounds of fighting, each card 1 round
             for (int i = 0; i<4; i++) {
                 game.addLogEntry("Runde " + i + ": ");
                 game.fight(player1.getStack().get(i), player2.getStack().get(i));
@@ -95,8 +95,8 @@ public class FightService {
             }
 
 
-            // die player hp = die summe alle deck karten nachdem sie miteinander gekämpft haben.
-            // aller karten haben 100 hp
+            // The player hp = the sum of all deck cards after they have fought each other.
+            // All cards have 100 hp
             int player1HP = 0;
             for (Card card : player1.getStack()){
                 player1HP += card.getHp();
@@ -141,7 +141,7 @@ public class FightService {
             BattleRepository battleRepository = new BattleRepository(unitOfWork);
             battleRepository.updateWinnerStats(winner.getUsername(), unitOfWork);
             battleRepository.updateLoserStats(loser.getUsername(), unitOfWork);
-            battleRepository.winnerTakseLoserCards(winner.getUsername(), loser.getUsername(), unitOfWork);
+            battleRepository.winnerTakesLoserCards(winner.getUsername(), loser.getUsername(), unitOfWork);
             unitOfWork.commitTransaction();
             return true;
         }catch (Exception e){

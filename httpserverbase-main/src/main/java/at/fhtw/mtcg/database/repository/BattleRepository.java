@@ -45,7 +45,7 @@ public class BattleRepository {
         return false;
 
     };
-    public boolean winnerTakseLoserCards(String winnerUsername, String loserUsername, UnitOfWork unitOfWork){
+    public boolean winnerTakesLoserCards(String winnerUsername, String loserUsername, UnitOfWork unitOfWork){
         try {
 
             UserRepository userRepository = new UserRepository(new UnitOfWork());

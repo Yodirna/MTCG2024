@@ -15,10 +15,10 @@ public class RewardService {
     }
 
     public Response handleGetReq(Request request) {
-        // Token von header holen
+        // Get the authorization token from the request header
         String token = request.getAuthorizationToken();
 
-        // Token validieren
+        // Validate the token
         if (!BearerToken.validateToken(token)) {
             String response = "Invalid Token";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);

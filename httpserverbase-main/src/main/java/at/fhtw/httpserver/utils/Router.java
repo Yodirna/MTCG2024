@@ -13,11 +13,6 @@ public class Router {
         this.serviceRegistry.put(route, service);
     }
 
-    public void removeService(String route)
-    {
-        this.serviceRegistry.remove(route);
-    }
-
     public RestController resolve(String route)
     {
         return this.serviceRegistry.get(route);

@@ -68,7 +68,7 @@ public class UserService {
         } catch (Exception e){
             // If the request body is invalid or not parsable as JSON, return 400 Bad Request
             e.printStackTrace();
-            String response = "invalid JSON data provided";
+            String response = "invalid JSON data provided!";
             return new Response(HttpStatus.BAD_REQUEST, ContentType.PLAIN_TEXT, response);
 
         }
@@ -82,7 +82,7 @@ public class UserService {
 
         // Validate the provided token to ensure the request is authorized
         if (!BearerToken.validateToken(token)) {
-            String response = "Invalid Token";
+            String response = "Invalid Token!";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
         }
 
@@ -114,7 +114,7 @@ public class UserService {
 
         boolean allTokenChecks = validateToken(token);
         if (!allTokenChecks){
-            String response = "Access token is missing or invalid";
+            String response = "Access token is missing or invalid!";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
         }
 
@@ -142,7 +142,7 @@ public class UserService {
                     String response = "users Data Updated! ";
                     return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, response);
                 }else {
-                    String response = "Insufficient privileges to update data";
+                    String response = "Insufficient privileges to update data!";
                     return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, response);
                 }
 
@@ -153,19 +153,19 @@ public class UserService {
                     String response = "users Data Updated! ";
                     return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, response);
                 }else {
-                    String response = "Insufficient privileges to update data";
+                    String response = "Insufficient privileges to update data!";
                     return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, response);
                 }
 
             }else{
                 // If token does not correspond to the requested username, return 403 Forbidden
-                String response = "Access token is missing or invalid";
+                String response = "Access token is missing or invalid!";
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
             }
         }catch (Exception e){
             e.printStackTrace();
             // In case of any internal error, return 500 Internal Server Error
-            String response = "Internal Server Error";
+            String response = "Internal Server Error!";
             return new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.PLAIN_TEXT, response);
         }
     }

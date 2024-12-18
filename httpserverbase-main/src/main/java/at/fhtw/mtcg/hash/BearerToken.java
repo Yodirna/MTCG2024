@@ -7,25 +7,19 @@ public class BearerToken
 {
 
     public static boolean validateToken(String token) {
-        //für hard coded
-        if (token.contains("kienboec") || token.contains("altenhof") || token.contains("admin")){
-            return true;
-        }
-        return false;
+        // hardcoded admin token
+        return token.contains("kienboec") || token.contains("altenhof") || token.contains("admin");
 
     }
+
     public static boolean isAdmin(String token) {
-        if ("admin-mtcgToken".equals(token)) {
-            return true;
-        }
-        return false;
+        return "admin-mtcgToken".equals(token);
 
     }
 
     public static String getTokenFromRequestBody(HttpExchange exchange){
         String authorizationHeader = exchange.getRequestHeaders().getFirst("Authorization");
-        String token = authorizationHeader.substring("Bearer ".length());
-        return token;
+        return authorizationHeader.substring("Bearer ".length());
     }
 
 }

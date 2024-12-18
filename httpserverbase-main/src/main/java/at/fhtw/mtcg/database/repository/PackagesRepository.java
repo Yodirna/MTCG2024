@@ -17,9 +17,8 @@ public class PackagesRepository {
     }
 
 
-    // Die funktion erstellt die Karten in der DB
+    // Add cards to the DB
     public boolean addPackageCardsToDB(List<Card> cards){
-/*        List<Card> cards = cardPackage.toList();*/
         String query = "INSERT INTO \"MonsterCards\" (name, damage, element, c_uuid) VALUES (?,?,?,?)";
         try{
             for (Card card : cards){
@@ -31,7 +30,6 @@ public class PackagesRepository {
                 unitOfWork.registerNew(pstmt);
             }
 
-/*            unitOfWork.commitTransaction();*/
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -40,7 +38,7 @@ public class PackagesRepository {
         }
     }
 
-    // Die Funktion erstellt einen package in der DB
+    // Add package to the DB
     public boolean addPackageToDB(List<Card> cards){
 /*        List<Card> cards = cardPackage.toList();*/
         String query = "INSERT INTO \"packages\" (card_1_id, card_2_id, card_3_id, card_4_id, card_5_id)" +
@@ -71,7 +69,6 @@ public class PackagesRepository {
 
     // Die funktion erstellt die Karten in der DB
     public boolean checkIfAnyPackageCardsAlreadyExists(List<Card> cards){
-/*        List<Card> cards = cardPackage.toList();*/
         String query = "SELECT * From \"MonsterCards\" where c_uuid = ?";
         try{
             for (Card card : cards){

@@ -43,13 +43,13 @@ public class DeckRepository {
             CardRepository cardRepository = new CardRepository(new UnitOfWork());
             UserRepository userRepository = new UserRepository(new UnitOfWork());
             int userID = userRepository.getUserID(username);
-            // holt sich die Ids der Deck Karten von der Person
+            // grabs the card ids of the deck
             Vector<String> deckCardsIds = getDeckCardsIds(userID);
             int len = deckCardsIds.size();
 
-            // erstellt einen leeren Vector, wo man die Karten reintut
+            // creates a vector to store all the deck cards
             Vector<Card> allDeckCards = new Vector<Card>();
-            //iteration, um die Karten Informationen jede Karte zu holen
+            // iterates through the deck card ids and gets the card data
             for (int i = 0; i < len; i++) {
                 Card card = cardRepository.getCardData(deckCardsIds.get(i));
                 allDeckCards.add(card);

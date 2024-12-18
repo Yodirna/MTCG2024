@@ -30,8 +30,7 @@ public class CardService {
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
         }
 
-
-        // Tge cards from altenhof
+        // Check if token contains altenhof
         if (token.contains("altenhof")){
             // Get all cards calls all the functions and creates a return
             List<String> response = cardRepository.getAllCards("altenhof");
@@ -42,10 +41,10 @@ public class CardService {
             }else{
                 return new Response(HttpStatus.OK, ContentType.JSON, response.toString());
             }
+        // Check if token contains kienboec
         }else if (token.contains("kienboec")){
             List<String>  response = cardRepository.getAllCards("kienboec");
 
-            // same for user kienboec
             if (response.toString().equals("[]")){
                 return new Response(HttpStatus.NO_CONTENT, ContentType.JSON, "[]");
             }else{

@@ -6,19 +6,20 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 public class CardPackage {
-    @Getter @Setter
     private List<Card> cards;
 
-    // constructor der eine liste entgegennnimmt
+    // Constructor that takes a list of cards
     public CardPackage(List<Card> cards) {
         if (cards == null || cards.size() != 5) {
-            throw new IllegalArgumentException("Liste muss genau 5 Karten enthalten");
+            throw new IllegalArgumentException("A package has to have exactly 5 cards");
         }
         this.cards = new ArrayList<>(cards);
     }
 
-    // Getter und setter
+    // Getter and Setter for each card
     public Card getCard1() {
         return cards.get(0);
     }
@@ -59,7 +60,7 @@ public class CardPackage {
         cards.set(4, card);
     }
 
-    // um ein CardPackage in Liste von Karten zu verwandeln
+    // To convert a package to a list
     public List<Card> toList() {
         return new ArrayList<>(cards);
     }
