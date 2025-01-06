@@ -17,7 +17,7 @@ public class TradingRepository {
     }
 
 
-    // Holt alle Trades Aus der DB
+    // Gets all Trades from the DB
     public Vector<String> getAllTrades(){
         try {
             String statsQuery = "Select * from \"trades\"";

@@ -41,6 +41,7 @@ public class PackageService {
             // extra check if the user is an admin
             boolean isAdmin = token.contains("admin");
 
+            // Create package from an array of cards
             // only admins can create packages
             if (isAdmin){
                 // read the body of the request
@@ -50,8 +51,9 @@ public class PackageService {
 
 
                 try {
-                    // create a vector of cards
+                    // create a vector for cards
                     List<Card> cards = new ArrayList<>();
+
 
                     for (JsonNode node : requestBody) {
                         // get the card information from the request body

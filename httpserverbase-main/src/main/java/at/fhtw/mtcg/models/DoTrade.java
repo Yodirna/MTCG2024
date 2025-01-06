@@ -13,7 +13,7 @@ public class DoTrade {
         this.unitOfWork = unitOfWork;
     }
 
-    public Response handleTradingWithId(String tradeID, String tradeAcceptorCardID, int tradeAcceptorID) {
+    public Response handleTrading(String tradeID, String tradeAcceptorCardID, int tradeAcceptorID) {
 
         try{
             // erstellt diverse Manager

@@ -16,6 +16,7 @@ public class Main {
         }
     }
 
+    // Service mappings
     private static Router configureRouter()
     {
         Router router = new Router();
@@ -25,11 +26,7 @@ public class Main {
         router.addService("/transactions", new TransactionController());
         router.addService("/cards", new CardController());
         router.addService("/deck", new DeckController());
-        router.addService("/stats", new StatsController());
-        router.addService("/scoreboard", new ScoreboardController());
         router.addService("/battles", new FightController());
-        router.addService("/tradings", new TradingController());
-        router.addService("/rewards", new RewardController());
 
         return router;
     }

@@ -15,7 +15,7 @@ public class StatsRepository {
     }
 
 
-    // holt die stats aus der db
+    // Gets the stats of a user
     public UserStats getStats(String username){
         try {
             UserRepository userRepository = new UserRepository(new UnitOfWork());

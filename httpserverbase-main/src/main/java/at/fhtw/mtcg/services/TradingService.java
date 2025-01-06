@@ -70,7 +70,7 @@ public class TradingService {
 
         // Execute the trade process with the given trade ID, the offered card ID, and the user’s ID
         DoTrade doTrade = new DoTrade(new UnitOfWork());
-        return doTrade.handleTradingWithId(tradeID, acceptorCardID, tradeAcceptorID);
+        return doTrade.handleTrading(tradeID, acceptorCardID, tradeAcceptorID);
 
     }
 

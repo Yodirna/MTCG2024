@@ -6,48 +6,66 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+/**
+ * Handles transactions related to card packages and coins in the database.
+ */
 public class TransactionRepository {
-    private UnitOfWork unitOfWork;
+    private final UnitOfWork unitOfWork;
     private int packageID;
-    public TransactionRepository(UnitOfWork unitOfWork)
-    {
+
+    public TransactionRepository(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
     }
 
-
-
-    public boolean addCardsToPlayer(int userID, String[] cardIds){
-
-        //karten dem user gutschreiben
+    /**
+     * Adds the provided cards to the specified player.
+     *
+     * @param userID  the ID of the player
+     * @param cardIds an array of card IDs to be assigned to the player
+     * @return true if successful, false otherwise
+     */
+    public boolean addCardsToPlayer(int userID, String[] cardIds) {
+        // Assign cards to the player
         try {
             Connection conn = unitOfWork.getConnection();
-            int cardIdsLength = cardIds.length;
-            for (int i = 0; i <= 4; i++) {
-                String cardsIntoDeckQuery = "INSERT INTO \"acquired_cards\" (fk_acquired_cards_user_id, fk_acquired_cards_card_id) VALUES (?, ?)";
+            // Since we know there are exactly 5 cards in a package, we can loop through them
+            for (int i = 0; i < cardIds.length; i++) {
+                String cardsIntoDeckQuery = "INSERT INTO \"acquired_cards\" " +
+                        "(fk_acquired_cards_user_id, fk_acquired_cards_card_id) " +
+                        "VALUES (?, ?)";
                 PreparedStatement pstmt = conn.prepareStatement(cardsIntoDeckQuery);
                 pstmt.setInt(1, userID);
                 pstmt.setString(2, cardIds[i]);
                 unitOfWork.registerNew(pstmt);
             }
-
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
-
-    public int getPackageID(){
+    /**
+     * @return the package ID retrieved from the database
+     */
+    public int getPackageID() {
         return packageID;
     }
-    public String[] getPackagesFromDB(){
-        try{
-            //package sql
+
+    /**
+     * Retrieves one package (with its card IDs) from the database.
+     *
+     * @return an array of card IDs if a package exists; an array of size 1 if no package remains;
+     *         an empty array if an error occurs
+     */
+    public String[] getPackagesFromDB() {
+        try {
+            // Select the first available package
             String packageSelectQuery = "SELECT * FROM \"packages\" LIMIT 1";
             PreparedStatement selectStmt = unitOfWork.prepareStatement(packageSelectQuery);
             ResultSet resultSet = selectStmt.executeQuery();
-            //package daten
+
+            // If there is at least one package
             if (resultSet.next()) {
                 this.packageID = resultSet.getInt("package_id");
                 String card1_id = resultSet.getString("card_1_id");
@@ -55,119 +73,142 @@ public class TransactionRepository {
                 String card3_id = resultSet.getString("card_3_id");
                 String card4_id = resultSet.getString("card_4_id");
                 String card5_id = resultSet.getString("card_5_id");
-                String[] cardIds = {card1_id, card2_id, card3_id, card4_id, card5_id};
-                return cardIds;
-            }else{
-                //keine packages mehr
+                return new String[]{card1_id, card2_id, card3_id, card4_id, card5_id};
+            } else {
+                // If there is no package left
                 return new String[1];
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
+            return new String[0];
         }
-        return new String[0];
     }
 
-
-
-    public boolean delete_package(int packageID){
-        try{
+    /**
+     * Deletes the package with the specified ID from the database.
+     *
+     * @param packageID the ID of the package to be deleted
+     * @return true if successful, false otherwise
+     */
+    public boolean deletePackage(int packageID) {
+        try {
             Connection conn = unitOfWork.getConnection();
-            //package löschen
+            // Delete the package from the database
             String deleteQuery = "DELETE FROM \"packages\" WHERE package_id = ?";
             PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
             deleteStmt.setInt(1, packageID);
             unitOfWork.registerNew(deleteStmt);
             return true;
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-
-    public int getUserCoins(int userID){
-        try {
-            String selectUserQuery = "SELECT * FROM \"user\" where fk_user_id = ?";
-            PreparedStatement selectUserStmt = unitOfWork.prepareStatement(selectUserQuery);
-            selectUserStmt.setInt(1, userID);
-            ResultSet coinResultSet = selectUserStmt.executeQuery();
-
-            if (coinResultSet.next()) {
-                int currecnt_coins = coinResultSet.getInt("coins");
-                return currecnt_coins;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    public boolean reallyReduceCoins(int currecntUserCoins, int userID){
-        try{
-            Connection conn = unitOfWork.getConnection();
-            int should_coins = currecntUserCoins - 5;
-            String deleteQuery = "Update \"user\" set coins = ? where fk_user_id = ? ";
-            PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
-            deleteStmt.setInt(1, should_coins);
-            deleteStmt.setInt(2, userID);
-            unitOfWork.registerNew(deleteStmt);
-            return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    // return legende: 0 --> unerwarteter Fehler. return 1 --> alles gut. return 2 --> es gibt keine packages
-    // return 3 --> user hat zu wenige coins
-    public int acquirePackage(String username) {
+    /**
+     * Retrieves the current number of coins for the specified user.
+     *
+     * @param userID the ID of the user
+     * @return the current number of coins, or -1 if an error occurred
+     */
+    public int getUserCoins(int userID) {
+        try {
+            String selectUserQuery = "SELECT * FROM \"user\" WHERE fk_user_id = ?";
+            PreparedStatement selectUserStmt = unitOfWork.prepareStatement(selectUserQuery);
+            selectUserStmt.setInt(1, userID);
+            ResultSet coinResultSet = selectUserStmt.executeQuery();
 
-        try{
+            if (coinResultSet.next()) {
+                return coinResultSet.getInt("coins");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * Reduces the user's coins by 5 after a successful package purchase.
+     *
+     * @param currentUserCoins the current number of coins the user has
+     * @param userID           the ID of the user
+     * @return true if successful, false otherwise
+     */
+    public boolean reallyReduceCoins(int currentUserCoins, int userID) {
+        try {
+            Connection conn = unitOfWork.getConnection();
+            int updatedCoins = currentUserCoins - 5;
+            String updateQuery = "UPDATE \"user\" SET coins = ? WHERE fk_user_id = ?";
+            PreparedStatement updateStmt = conn.prepareStatement(updateQuery);
+            updateStmt.setInt(1, updatedCoins);
+            updateStmt.setInt(2, userID);
+            unitOfWork.registerNew(updateStmt);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Acquires a package for the specified user if they have enough coins and packages are available.
+     *
+     * <p>Return legend:
+     * <ul>
+     *     <li>0 -> Unexpected error</li>
+     *     <li>1 -> Successful purchase</li>
+     *     <li>2 -> No packages available</li>
+     *     <li>3 -> Not enough coins</li>
+     * </ul>
+     *
+     * @param username the name of the user
+     * @return an integer representing the result status (0,1,2,3)
+     */
+    public int acquirePackage(String username) {
+        try {
             UserRepository userRepository = new UserRepository(new UnitOfWork());
             int userID = userRepository.getUserID(username);
             String[] cardIds = getPackagesFromDB();
 
-            // wenn cards länge 0 --> fehler in der funktion
-            if (cardIds.length == 0){
-                /*                return "Fehler bei packages from database";*/
+            // If error occurred in fetching packages
+            if (cardIds.length == 0) {
                 return 0;
-                // wenn cards länge 1 --> es gibt keine packages
-            }else if (cardIds.length == 1){
-                /*                return "Es gibt keine packages mehr";*/
+            }
+            // If no packages remain
+            else if (cardIds.length == 1) {
                 return 2;
-            } else{
-
+            } else {
                 int userCoins = getUserCoins(userID);
 
-                if (userCoins == -1){
-                    /*                    return "Couldnt get user Coins from Database!";*/
+                // Could not retrieve coins
+                if (userCoins == -1) {
                     return 0;
-                }else if (userCoins < 5){
-                    /*                    return "Not enough money for buying a card package";*/
+                }
+                // Not enough coins
+                else if (userCoins < 5) {
                     return 3;
                 }
 
                 int packageID = getPackageID();
-                if (addCardsToPlayer(userID, cardIds) &&
-                        delete_package(packageID) &&
-                        reallyReduceCoins(userCoins, userID)){
+                boolean cardsAssigned = addCardsToPlayer(userID, cardIds);
+                boolean packageDeleted = deletePackage(packageID);
+                boolean coinsReduced = reallyReduceCoins(userCoins, userID);
+
+                // If all operations succeed
+                if (cardsAssigned && packageDeleted && coinsReduced) {
                     unitOfWork.commitTransaction();
-                    /*                    return "Karten dem Player zugeschrieben";*/
                     return 1;
-                }else {
+                } else {
+                    // If any operation fails, roll back
                     unitOfWork.rollbackTransaction();
-                    /*                    return "Karten nicht dem Player zugeschrieben";*/
                     return 0;
                 }
-
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             unitOfWork.rollbackTransaction();
             return 0;
         }
-        // unit of work muss nicht geschlossen werden, weil es auto closeable ist
-
-
+        // No need to explicitly close UnitOfWork since it is AutoCloseable
     }
 }

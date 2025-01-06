@@ -25,7 +25,7 @@ public class UserService {
 
 
 
-
+    // Handle user registration requests
     public Response handlePostRequest(Request request) {
         try {
 
@@ -139,7 +139,7 @@ public class UserService {
             if (token.contains("altenhof") && usernameFromPath.equals("altenhof")){
                 boolean updateUserData = userRepository.updateUserData(usernameFromPath, name, bio, image);
                 if (updateUserData){
-                    String response = "users Data Updated! ";
+                    String response = "Users Data Updated! ";
                     return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, response);
                 }else {
                     String response = "Insufficient privileges to update data!";

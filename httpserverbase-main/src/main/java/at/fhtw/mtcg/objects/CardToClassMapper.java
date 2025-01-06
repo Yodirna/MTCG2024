@@ -19,22 +19,22 @@ public class CardToClassMapper {
 
     static {
 
-        // Alle Dragons
+        // All Dragons
         cardRegistry.put("Dragon", NormalDragon::new);
         cardRegistry.put("WaterDragon", WaterDragon::new);
         cardRegistry.put("FireDragon", FireDragon::new);
 
-        // Alle Elves
+        // All Elves
         cardRegistry.put("Elf", NormalElf::new);
         cardRegistry.put("WaterElf", WaterElf::new);
         cardRegistry.put("FireElf", FireElf::new);
 
-        // Alle Goblins
+        // All Goblins
         cardRegistry.put("Goblin", NormalGoblin::new);
         cardRegistry.put("WaterGoblin", WaterGoblin::new);
         cardRegistry.put("FireGoblin", FireGoblin::new);
 
-        // Alle Knights
+        // All Knights
         cardRegistry.put("Knight", NormalKnight::new);
         cardRegistry.put("WaterKnight", WaterKnight::new);
         cardRegistry.put("FireKnight", FireKnight::new);
@@ -42,17 +42,17 @@ public class CardToClassMapper {
         // Kraken
         cardRegistry.put("Kraken", Kraken::new);
 
-        // Alle Orks
+        // All Orks
         cardRegistry.put("Ork", NormalOrk::new);
         cardRegistry.put("WaterOrk", WaterOrk::new);
         cardRegistry.put("FireOrk", FireOrk::new);
 
-        // Alle Wizzards
+        // All Wizzards
         cardRegistry.put("Wizard", NormalWizard::new);
         cardRegistry.put("WaterWizard", WaterWizard::new);
         cardRegistry.put("FireWizard", FireWizard::new);
 
-        // Alle Spells
+        // All Spells
         cardRegistry.put("RegularSpell", NormalSpell::new);
         cardRegistry.put("WaterSpell", WaterSpell::new);
         cardRegistry.put("FireSpell", FireSpell::new);
