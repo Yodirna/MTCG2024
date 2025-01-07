@@ -27,6 +27,10 @@ public class Main {
         router.addService("/cards", new CardController());
         router.addService("/deck", new DeckController());
         router.addService("/battles", new FightController());
+        router.addService("/stats", new StatsController());
+        router.addService("/scoreboard", new ScoreboardController());
+        router.addService("/tradings", new TradingController());
+        router.addService("/rewards", new RewardController());
 
         return router;
     }

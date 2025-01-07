@@ -19,10 +19,8 @@ public class CardService {
     // Get Request
     public Response handleGetReq(Request request){
 
-
         // Get token from header
         String token = request.getAuthorizationToken();
-
 
         // Validate token
         if (token == null || !BearerToken.validateToken(token)) {

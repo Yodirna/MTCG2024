@@ -14,7 +14,7 @@ import at.fhtw.mtcg.database.repository.DeckRepository;
 
 import java.util.*;
 
-import static at.fhtw.mtcg.objects.CardToClassMapper.createRealCard;
+import static at.fhtw.mtcg.cards.CardToClassMapper.createRealCard;
 
 
 public class FightService {
