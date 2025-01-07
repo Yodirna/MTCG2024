@@ -23,7 +23,7 @@ public class DeckController {
     }
 
     public Response handleGetReq(Request request) {
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
 
         if (!Token.validateToken(token)) {
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "Invalid Token");
@@ -52,7 +52,7 @@ public class DeckController {
                         "The provided deck must include exactly 4 cards");
             }
 
-            String token = request.getAuthorizationToken();
+            String token = request.acquireAuthorizationToken();
             if (!Token.validateToken(token)) {
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "Invalid Token");
             }

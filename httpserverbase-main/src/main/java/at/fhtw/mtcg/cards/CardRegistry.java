@@ -23,36 +23,43 @@ public class CardRegistry {
         cardRegistry.put("Dragon", NormalDragon::new);
         cardRegistry.put("WaterDragon", WaterDragon::new);
         cardRegistry.put("FireDragon", FireDragon::new);
+        cardRegistry.put("NormalDragon", NormalDragon::new);
 
         // All Elves
         cardRegistry.put("Elf", NormalElf::new);
         cardRegistry.put("WaterElf", WaterElf::new);
         cardRegistry.put("FireElf", FireElf::new);
+        cardRegistry.put("NormalElf", NormalElf::new);
 
         // All Goblins
         cardRegistry.put("Goblin", NormalGoblin::new);
         cardRegistry.put("WaterGoblin", WaterGoblin::new);
         cardRegistry.put("FireGoblin", FireGoblin::new);
+        cardRegistry.put("NormalGoblin", NormalGoblin::new);
 
         // All Knights
         cardRegistry.put("Knight", NormalKnight::new);
         cardRegistry.put("WaterKnight", WaterKnight::new);
         cardRegistry.put("FireKnight", FireKnight::new);
+        cardRegistry.put("NormalKnight", NormalKnight::new);
 
         // All Orks
         cardRegistry.put("Ork", NormalOrk::new);
         cardRegistry.put("WaterOrk", WaterOrk::new);
         cardRegistry.put("FireOrk", FireOrk::new);
+        cardRegistry.put("NormalOrk", NormalOrk::new);
 
         // All Wizards
         cardRegistry.put("Wizard", NormalWizard::new);
         cardRegistry.put("WaterWizard", WaterWizard::new);
         cardRegistry.put("FireWizard", FireWizard::new);
+        cardRegistry.put("NormalWizard", NormalWizard::new);
 
         // All Spells
         cardRegistry.put("RegularSpell", NormalSpell::new);
         cardRegistry.put("WaterSpell", WaterSpell::new);
         cardRegistry.put("FireSpell", FireSpell::new);
+        cardRegistry.put("NormalSpell", NormalSpell::new);
 
         // Kraken
         cardRegistry.put("Kraken", Kraken::new);

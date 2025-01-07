@@ -18,7 +18,7 @@ public class StatsController {
 
     public Response handleGetReq(Request request) {
         // Extract and validate the token from the header
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
 
         if (!Token.validateToken(token)) {
             return createPlainTextResponse(HttpStatus.FORBIDDEN, "Invalid Token");

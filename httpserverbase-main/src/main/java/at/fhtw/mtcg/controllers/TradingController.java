@@ -25,7 +25,7 @@ public class TradingController {
 
     public Response handlePostRequest(Request request) {
         // Extract the token from the request header for authorization
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
 
 
         // Validate the extracted token to ensure it is correct and not expired
@@ -79,7 +79,7 @@ public class TradingController {
         UserRepository userRepository = new UserRepository(new UnitOfWork());
         try{
             // Extract the token from the request header for authorization
-            String token = request.getAuthorizationToken();
+            String token = request.acquireAuthorizationToken();
 
 
             // Validate the token to ensure the user is authorized to create a trade
@@ -196,7 +196,7 @@ public class TradingController {
         String tradeID = pathParts.get(1);
         // Retrieve all cards the user owns to confirm that they own the card associated with the trade being deleted
         int userIdFromToken = -1;
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
         if (token.contains("altenhof")){
             userIdFromToken = userRepository.getUserID("altenhof");
         } else if (token.contains("kienboec")) {

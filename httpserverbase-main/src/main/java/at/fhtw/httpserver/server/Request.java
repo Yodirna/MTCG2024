@@ -25,7 +25,7 @@ public class Request {
     }
 
 
-    public String getAuthorizationToken() {
+    public String acquireAuthorizationToken() {
         String authHeader = this.headerMap.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader;

@@ -28,7 +28,7 @@ public class CardsController {
      */
     public Response handleGetReq(Request request) {
         // Retrieve the authorization token from the request header
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
 
         // Validate the token
         if (token == null || !Token.validateToken(token)) {

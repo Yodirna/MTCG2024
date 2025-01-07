@@ -9,7 +9,7 @@ import at.fhtw.mtcg.models.GameLogic;
 import at.fhtw.mtcg.models.User;
 import at.fhtw.mtcg.security.Token;
 import at.fhtw.mtcg.database.UnitOfWork;
-import at.fhtw.mtcg.database.repository.FightRepository;
+import at.fhtw.mtcg.database.repository.LobbyRepository;
 import at.fhtw.mtcg.database.repository.DeckRepository;
 
 import java.util.*;
@@ -18,19 +18,19 @@ import static at.fhtw.mtcg.cards.CardRegistry.createRealCard;
 
 
 public class LobbyController {
-    private FightRepository fightRepository;
+    private LobbyRepository lobbyRepository;
     private static final List<User> lobby = Collections.synchronizedList(new ArrayList<>());
     private static final Object lock = new Object();
     public static final List<Request> requests = Collections.synchronizedList(new ArrayList<>());
     private final Map<Request, Response> pendingResponses = new HashMap<>();
 
     public LobbyController() {
-        fightRepository = new FightRepository(new UnitOfWork());
+        lobbyRepository = new LobbyRepository(new UnitOfWork());
 
     }
 
     public synchronized void handlePostReq(Request request) {
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
         if (!Token.validateToken(token)) {
             pendingResponses.put(request, new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "Invalid Token!"));
             return;
@@ -48,8 +48,8 @@ public class LobbyController {
 
             String battleLogs = startBattle(player1, player2);
 
-            pendingResponses.put(request1, new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, String.join("\n", battleLogs)));
-            pendingResponses.put(request2, new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, String.join("\n", battleLogs)));
+            pendingResponses.put(request1, new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, battleLogs));
+            pendingResponses.put(request2, new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, battleLogs));
             // Notify all waiting threads that the response is available
             notifyAll();
         }
@@ -89,7 +89,7 @@ public class LobbyController {
 
             // 4 rounds of fighting, each card 1 round
             for (int i = 0; i<4; i++) {
-                gameLogic.addLogEntry("Runde " + i + ": ");
+                gameLogic.addLogEntry("Round " + i + ": ");
                 gameLogic.fight(player1.getStack().get(i), player2.getStack().get(i));
 
             }
@@ -118,7 +118,7 @@ public class LobbyController {
             if (player1HP > player2HP){
                 String response = player1.getUsername() + " wins!\n";
                 doPostGameUpdates(player1, player2);
-                return response + logsFormatted;
+                return logsFormatted + response;
 
             }else if (player1HP == player2HP){
                 return logsFormatted;
@@ -126,7 +126,7 @@ public class LobbyController {
             } else{
                 String response = player2.getUsername() + " wins!\n";
                 doPostGameUpdates(player2, player1);
-                return response + logsFormatted;
+                return logsFormatted + response;
             }
 
 
@@ -138,10 +138,10 @@ public class LobbyController {
     public boolean doPostGameUpdates(User winner, User loser){
         UnitOfWork unitOfWork = new UnitOfWork();
         try {
-            FightRepository fightRepository = new FightRepository(unitOfWork);
-            fightRepository.updateWinnerStats(winner.getUsername(), unitOfWork);
-            fightRepository.updateLoserStats(loser.getUsername(), unitOfWork);
-            fightRepository.winnerTakesLoserCards(winner.getUsername(), loser.getUsername(), unitOfWork);
+            LobbyRepository lobbyRepository = new LobbyRepository(unitOfWork);
+            lobbyRepository.updateWinnerStats(winner.getUsername(), unitOfWork);
+            lobbyRepository.updateLoserStats(loser.getUsername(), unitOfWork);
+            lobbyRepository.winnerTakesLoserCards(winner.getUsername(), loser.getUsername(), unitOfWork);
             unitOfWork.commitTransaction();
             return true;
         }catch (Exception e){

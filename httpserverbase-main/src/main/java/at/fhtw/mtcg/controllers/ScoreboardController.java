@@ -22,7 +22,7 @@ public class ScoreboardController {
 
     public Response handleGetReq(Request request) {
         // Get the authorization token from the request header
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
 
         // Validate the token
         if (!Token.validateToken(token)) {

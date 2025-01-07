@@ -10,56 +10,53 @@ import at.fhtw.mtcg.database.repository.RewardRepository;
 
 public class RewardsController {
     private final RewardRepository rewardRepository;
+
     public RewardsController() {
-        rewardRepository = new RewardRepository(new UnitOfWork());
+        this.rewardRepository = new RewardRepository(new UnitOfWork());
     }
 
     public Response handleGetReq(Request request) {
         // Get the authorization token from the request header
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
 
         // Validate the token
         if (!Token.validateToken(token)) {
-            String response = "Invalid Token";
-            return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
+            return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "Invalid Token");
         }
 
-        if (token.contains("altenhof")){
-            int mmr = rewardRepository.getmmr("altenhof");
+        // Extract username from token
+        String username = extractUsernameFromToken(token);
+        if (username == null) {
+            return new Response(HttpStatus.UNAUTHORIZED, ContentType.PLAIN_TEXT, "Unauthorized Token");
+        }
 
-            if (mmr > 250){
-                int CurrentCoins =rewardRepository.getUserCoins("altenhof");
-                boolean rc = rewardRepository.getReward(CurrentCoins, "altenhof");
+        // Handle rewards logic
+        return processRewards(username);
+    }
 
-                if (rc){
-                    return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "10 coins erhalten");
-                }else{
-                    return new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.PLAIN_TEXT, "ein Unbekannter Fehler ist aufgetaucht");
-                }
+    private Response processRewards(String username) {
+        int mmr = rewardRepository.getmmr(username);
+
+        if (mmr > 250) {
+            int currentCoins = rewardRepository.getUserCoins(username);
+            boolean rewardGranted = rewardRepository.getReward(currentCoins, username);
+
+            if (rewardGranted) {
+                return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "received 30 coins!");
+            } else {
+                return new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.PLAIN_TEXT, "An unknown error occurred");
             }
+        }
 
-            return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "User hat weniger als 250 MMR Punkte");
+        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "User has less than 250 MMR points");
+    }
 
-
-
-
+    private String extractUsernameFromToken(String token) {
+        if (token.contains("altenhof")) {
+            return "altenhof";
         } else if (token.contains("kienboec")) {
-            int mmr = rewardRepository.getmmr("kienboec");
-
-            if (mmr > 250){
-                int CurrentCoins = rewardRepository.getUserCoins("kienboec");
-                boolean rc = rewardRepository.getReward(CurrentCoins, "kienboec");
-                if (rc){
-                    return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "10 coins erhalten");
-                }else{
-                    return new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.PLAIN_TEXT, "ein Unbekannter Fehler ist aufgetaucht");
-                }
-            }
-
-            return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "User hat weniger als 250 MMR Punkte");
-
-        }else{
-            return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, "etwas ist schiefgelaufe");
+            return "kienboec";
         }
+        return null; // Invalid token
     }
 }

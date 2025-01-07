@@ -78,7 +78,7 @@ public class UserController {
     public Response handleGetReq(Request request){
 
         // Extract the authorization token from the request
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
 
         // Validate the provided token to ensure the request is authorized
         if (!Token.validateToken(token)) {
@@ -110,7 +110,7 @@ public class UserController {
 
 
         // Extract the authorization token to validate the update request
-        String token = request.getAuthorizationToken();
+        String token = request.acquireAuthorizationToken();
 
         boolean allTokenChecks = validateToken(token);
         if (!allTokenChecks){

@@ -17,6 +17,11 @@ public class HeaderMap {
         return headers.get(headerName);
     }
 
+    public void addHeader(String key, String value) {
+        this.headers.put(key, value); // Assuming headers is a Map<String, String>
+    }
+
+
     public int getContentLength() {
         final String header = headers.get(CONTENT_LENGTH_HEADER);
         if (header == null) {

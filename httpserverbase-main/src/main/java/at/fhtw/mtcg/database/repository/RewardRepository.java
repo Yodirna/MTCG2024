@@ -57,7 +57,7 @@ public class RewardRepository {
             UserRepository userRepository = new UserRepository(new UnitOfWork());
             int userId = userRepository.getUserID(username);
 
-            int should_coins = currentCoins + 10;
+            int should_coins = currentCoins + 30;
             String updateQuery = "Update \"user\" set coins = ? where fk_user_id = ? ";
             PreparedStatement preparedStatement = unitOfWork.prepareStatement(updateQuery);
             preparedStatement.setInt(1, should_coins);

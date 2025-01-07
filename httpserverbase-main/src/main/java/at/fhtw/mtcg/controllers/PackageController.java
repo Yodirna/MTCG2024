@@ -38,7 +38,7 @@ public class PackageController {
     public Response handlePostRequest(Request request) {
         try {
             // Get the authorization token from the request header
-            String token = request.getAuthorizationToken();
+            String token = request.acquireAuthorizationToken();
 
             // Validate the token
             if (!validateToken(token)) {

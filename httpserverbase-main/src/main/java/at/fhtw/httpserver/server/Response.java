@@ -24,6 +24,11 @@ public class Response {
         this.content = content;
     }
 
+    public int getStatusCode() {
+        return this.status;
+    }
+
+
     public String get() {
 
         String localDatetime = DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now(ZoneId.of("UTC")));
