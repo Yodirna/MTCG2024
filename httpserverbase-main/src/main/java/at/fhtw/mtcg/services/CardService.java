@@ -4,7 +4,7 @@ import at.fhtw.httpserver.httpconfig.ContentType;
 import at.fhtw.httpserver.httpconfig.HttpStatus;
 import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
-import at.fhtw.mtcg.hash.BearerToken;
+import at.fhtw.mtcg.security.Token;
 import at.fhtw.mtcg.database.UnitOfWork;
 import at.fhtw.mtcg.database.repository.CardRepository;
 
@@ -23,7 +23,7 @@ public class CardService {
         String token = request.getAuthorizationToken();
 
         // Validate token
-        if (token == null || !BearerToken.validateToken(token)) {
+        if (token == null || !Token.validateToken(token)) {
             String response = "Invalid Token";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
         }

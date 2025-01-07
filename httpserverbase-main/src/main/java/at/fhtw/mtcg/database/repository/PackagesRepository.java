@@ -67,23 +67,25 @@ public class PackagesRepository {
     }
 
 
-    // Die funktion erstellt die Karten in der DB
-    public boolean checkIfAnyPackageCardsAlreadyExists(List<Card> cards){
-        String query = "SELECT * From \"MonsterCards\" where c_uuid = ?";
-        try{
-            for (Card card : cards){
-                PreparedStatement pstmt = unitOfWork.prepareStatement(query);
-                pstmt.setString(1, card.getID());
-                ResultSet resultSet = pstmt.executeQuery();
-                if (resultSet.next()){
-                    return true;
-                }
+    // check if any card already exists in the DB
+    public boolean checkIfCardAlreadyExists(List<Card> cards) {
+        String query = "SELECT * FROM \"MonsterCards\" WHERE c_uuid IN (%s)";
+        String placeholders = String.join(",", cards.stream().map(c -> "?").toList());
+
+        try (PreparedStatement pstmt = unitOfWork.prepareStatement(String.format(query, placeholders))) {
+            int index = 1;
+            for (Card card : cards) {
+                pstmt.setString(index++, card.getID());
             }
-            return false;
-        }catch (Exception e){
+
+            ResultSet resultSet = pstmt.executeQuery();
+            return resultSet.next(); // True if any card exists
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
+
 
 
 }

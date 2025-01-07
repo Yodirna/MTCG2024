@@ -5,7 +5,7 @@ import at.fhtw.httpserver.httpconfig.HttpStatus;
 import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
 import at.fhtw.mtcg.models.UserStats;
-import at.fhtw.mtcg.hash.BearerToken;
+import at.fhtw.mtcg.security.Token;
 import at.fhtw.mtcg.database.UnitOfWork;
 import at.fhtw.mtcg.database.repository.ScoreboardRepository;
 
@@ -25,7 +25,7 @@ public class ScoreboardService {
         String token = request.getAuthorizationToken();
 
         // Validate the token
-        if (!BearerToken.validateToken(token)) {
+        if (!Token.validateToken(token)) {
             String response = "Invalid Token";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
         }

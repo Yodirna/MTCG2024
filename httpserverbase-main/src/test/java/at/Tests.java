@@ -23,11 +23,11 @@ import at.fhtw.mtcg.cards.Spells.NormalSpell;
 import at.fhtw.mtcg.cards.Spells.WaterSpell;
 import at.fhtw.mtcg.models.Card;
 import at.fhtw.mtcg.models.Game;
-import at.fhtw.mtcg.hash.Hash;
+import at.fhtw.mtcg.security.Hash;
 import org.junit.jupiter.api.Test;
 
 
-import static at.fhtw.mtcg.hash.Hash.hashPassword;
+import static at.fhtw.mtcg.security.Hash.hashPassword;
 import static org.junit.jupiter.api.Assertions.*;
 
 

@@ -1,6 +1,6 @@
 package at.fhtw.mtcg.database.repository;
 
-import at.fhtw.mtcg.hash.Hash;
+import at.fhtw.mtcg.security.Hash;
 import at.fhtw.mtcg.database.UnitOfWork;
 
 import java.sql.PreparedStatement;

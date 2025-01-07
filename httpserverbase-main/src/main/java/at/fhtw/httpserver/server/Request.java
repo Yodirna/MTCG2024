@@ -28,9 +28,9 @@ public class Request {
     public String getAuthorizationToken() {
         String authHeader = this.headerMap.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader/*.substring(7)*/;
+            return authHeader;
         }
-        return null; // Kein Token vorhanden oder nicht im Bearer-Format
+        return null; // No Authorization header or no Bearer token
     }
 
 
@@ -43,7 +43,7 @@ public class Request {
                 }
             }
         }
-        return null; // Kein Format-Parameter vorhanden
+        return null; // No format parameter
     }
 
     public String getUrlContent(){

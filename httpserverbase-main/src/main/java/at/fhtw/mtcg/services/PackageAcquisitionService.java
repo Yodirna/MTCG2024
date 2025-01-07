@@ -5,15 +5,15 @@ import at.fhtw.httpserver.httpconfig.HttpStatus;
 import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
 import at.fhtw.mtcg.database.UnitOfWork;
-import at.fhtw.mtcg.database.repository.TransactionRepository;
+import at.fhtw.mtcg.database.repository.PackageAcquisitionRepository;
 
-import static at.fhtw.mtcg.hash.BearerToken.validateToken;
+import static at.fhtw.mtcg.security.Token.validateToken;
 
-public class TransactionService {
+public class PackageAcquisitionService {
 
-    private TransactionRepository transactionRepository;
-    public TransactionService() {
-        transactionRepository = new TransactionRepository(new UnitOfWork());
+    private PackageAcquisitionRepository packageAcquisitionRepository;
+    public PackageAcquisitionService() {
+        packageAcquisitionRepository = new PackageAcquisitionRepository(new UnitOfWork());
     }
 
     public Response handlePostRequest(Request request) {
@@ -30,7 +30,7 @@ public class TransactionService {
 
             // If the token belongs to "altenhof", proceed to purchase a package as "altenhof"
             if (token.contains("altenhof")) {
-                int code = transactionRepository.acquirePackage("altenhof");
+                int code = packageAcquisitionRepository.acquirePackage("altenhof");
                 String response;
                 if (code == 1){
                     // Successfully purchased a package
@@ -55,7 +55,7 @@ public class TransactionService {
 
                 // If the token belongs to "kienboec", proceed to purchase a package as "kienboec"
             } else if (token.contains("kienboec")) {
-                int code = transactionRepository.acquirePackage("kienboec");
+                int code = packageAcquisitionRepository.acquirePackage("kienboec");
                 String response;
                 if (code == 1){
                     // Successfully purchased a package

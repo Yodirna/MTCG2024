@@ -5,7 +5,7 @@ import at.fhtw.httpserver.httpconfig.HttpStatus;
 import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
 import at.fhtw.mtcg.models.Card;
-import at.fhtw.mtcg.hash.BearerToken;
+import at.fhtw.mtcg.security.Token;
 import at.fhtw.mtcg.database.UnitOfWork;
 import at.fhtw.mtcg.database.repository.DeckRepository;
 import at.fhtw.mtcg.database.repository.UserRepository;
@@ -26,8 +26,8 @@ public class DeckService {
         // Get the token from the header
         String token = request.getAuthorizationToken();
 
-        // validate the token
-        if (!BearerToken.validateToken(token)) {
+        // Validate the token
+        if (!Token.validateToken(token)) {
             String response = "Invalid Token";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
         }
@@ -128,7 +128,7 @@ public class DeckService {
             String token = request.getAuthorizationToken();
 
             // validate the token
-            if (!BearerToken.validateToken(token)) {
+            if (!Token.validateToken(token)) {
                 String response = "Invalid Token";
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
             }

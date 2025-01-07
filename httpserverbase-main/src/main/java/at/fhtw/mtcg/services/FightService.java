@@ -7,7 +7,7 @@ import at.fhtw.httpserver.server.Response;
 import at.fhtw.mtcg.models.Card;
 import at.fhtw.mtcg.models.Game;
 import at.fhtw.mtcg.models.User;
-import at.fhtw.mtcg.hash.BearerToken;
+import at.fhtw.mtcg.security.Token;
 import at.fhtw.mtcg.database.UnitOfWork;
 import at.fhtw.mtcg.database.repository.BattleRepository;
 import at.fhtw.mtcg.database.repository.DeckRepository;
@@ -31,7 +31,7 @@ public class FightService {
 
     public synchronized void handlePostReq(Request request) {
         String token = request.getAuthorizationToken();
-        if (!BearerToken.validateToken(token)) {
+        if (!Token.validateToken(token)) {
             pendingResponses.put(request, new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "Invalid Token!"));
             return;
         }

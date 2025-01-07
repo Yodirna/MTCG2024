@@ -345,7 +345,7 @@ public class Game {
     }
 
     /**
-     * Determines the descriptive type of the hit (critical, inefficient, ineffective).
+     * Determines the type of the hit (critical, inefficient, ineffective).
      *
      * @param card       the card delivering the hit.
      * @param cardDamage the damage that card actually inflicts after modifiers.

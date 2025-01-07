@@ -5,7 +5,7 @@ import at.fhtw.httpserver.httpconfig.HttpStatus;
 import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
 import at.fhtw.mtcg.models.UserCredentials;
-import at.fhtw.mtcg.hash.BearerToken;
+import at.fhtw.mtcg.security.Token;
 import at.fhtw.mtcg.database.UnitOfWork;
 import at.fhtw.mtcg.database.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-import static at.fhtw.mtcg.hash.BearerToken.*;
-import static at.fhtw.mtcg.hash.Hash.hashPassword;
+import static at.fhtw.mtcg.security.Token.*;
+import static at.fhtw.mtcg.security.Hash.hashPassword;
 
 public class UserService {
 
@@ -81,7 +81,7 @@ public class UserService {
         String token = request.getAuthorizationToken();
 
         // Validate the provided token to ensure the request is authorized
-        if (!BearerToken.validateToken(token)) {
+        if (!Token.validateToken(token)) {
             String response = "Invalid Token!";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
         }

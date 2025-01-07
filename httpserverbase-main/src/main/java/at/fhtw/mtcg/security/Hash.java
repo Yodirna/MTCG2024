@@ -1,4 +1,4 @@
-package at.fhtw.mtcg.hash;
+package at.fhtw.mtcg.security;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

@@ -9,11 +9,11 @@ import java.sql.ResultSet;
 /**
  * Handles transactions related to card packages and coins in the database.
  */
-public class TransactionRepository {
+public class PackageAcquisitionRepository {
     private final UnitOfWork unitOfWork;
     private int packageID;
 
-    public TransactionRepository(UnitOfWork unitOfWork) {
+    public PackageAcquisitionRepository(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
     }
 

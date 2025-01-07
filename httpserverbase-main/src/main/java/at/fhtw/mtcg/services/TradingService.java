@@ -6,7 +6,7 @@ import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
 import at.fhtw.mtcg.models.DoTrade;
 import at.fhtw.mtcg.models.Trade;
-import at.fhtw.mtcg.hash.BearerToken;
+import at.fhtw.mtcg.security.Token;
 import at.fhtw.mtcg.database.UnitOfWork;
 import at.fhtw.mtcg.database.repository.CardRepository;
 import at.fhtw.mtcg.database.repository.TradingRepository;
@@ -29,7 +29,7 @@ public class TradingService {
 
 
         // Validate the extracted token to ensure it is correct and not expired
-        if (token == null || !BearerToken.validateToken(token)) {
+        if (token == null || !Token.validateToken(token)) {
             String response = "Invalid Token!";
             return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
         }
@@ -83,7 +83,7 @@ public class TradingService {
 
 
             // Validate the token to ensure the user is authorized to create a trade
-            if (token == null || !BearerToken.validateToken(token)) {
+            if (token == null || !Token.validateToken(token)) {
                 String response = "Invalid Token!";
                 return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, response);
             }
