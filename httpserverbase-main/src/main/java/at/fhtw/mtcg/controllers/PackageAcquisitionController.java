@@ -8,10 +8,10 @@ import at.fhtw.httpserver.server.Response;
 import at.fhtw.httpserver.server.RestController;
 import at.fhtw.mtcg.services.PackageAcquisitionService;
 
-public class TransactionController implements RestController {
+public class PackageAcquisitionController implements RestController {
     private final PackageAcquisitionService packageAcquisitionService;
 
-    public TransactionController() {
+    public PackageAcquisitionController() {
         this.packageAcquisitionService = new PackageAcquisitionService();
     }
 

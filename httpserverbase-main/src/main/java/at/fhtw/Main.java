@@ -23,7 +23,7 @@ public class Main {
         router.addService("/users", new UserController());
         router.addService("/sessions", new SessionController());
         router.addService("/packages", new PackageController());
-        router.addService("/transactions", new TransactionController());
+        router.addService("/transactions", new PackageAcquisitionController());
         router.addService("/cards", new CardController());
         router.addService("/deck", new DeckController());
         router.addService("/battles", new FightController());
