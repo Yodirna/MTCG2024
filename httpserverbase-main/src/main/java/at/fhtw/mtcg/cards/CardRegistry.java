@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class CardToClassMapper {
+public class CardRegistry {
     private static final Map<String, Supplier<Card>> cardRegistry = new HashMap<>();
 
     static {
@@ -44,7 +44,7 @@ public class CardToClassMapper {
         cardRegistry.put("WaterOrk", WaterOrk::new);
         cardRegistry.put("FireOrk", FireOrk::new);
 
-        // All Wizzards
+        // All Wizards
         cardRegistry.put("Wizard", NormalWizard::new);
         cardRegistry.put("WaterWizard", WaterWizard::new);
         cardRegistry.put("FireWizard", FireWizard::new);

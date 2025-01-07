@@ -1,4 +1,4 @@
-package at.fhtw.mtcg.services;
+package at.fhtw.mtcg.controllers;
 
 import at.fhtw.httpserver.httpconfig.ContentType;
 import at.fhtw.httpserver.httpconfig.HttpStatus;
@@ -8,9 +8,9 @@ import at.fhtw.mtcg.security.Token;
 import at.fhtw.mtcg.database.UnitOfWork;
 import at.fhtw.mtcg.database.repository.RewardRepository;
 
-public class RewardService {
+public class RewardsController {
     private final RewardRepository rewardRepository;
-    public RewardService() {
+    public RewardsController() {
         rewardRepository = new RewardRepository(new UnitOfWork());
     }
 

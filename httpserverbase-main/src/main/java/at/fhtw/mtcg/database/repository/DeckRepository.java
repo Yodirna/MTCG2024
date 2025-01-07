@@ -10,146 +10,122 @@ import java.util.List;
 import java.util.Vector;
 
 public class DeckRepository {
-    private UnitOfWork unitOfWork;
+    private final UnitOfWork unitOfWork;
 
-    public DeckRepository(UnitOfWork unitOfWork)
-    {
+    public DeckRepository(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
     }
 
     // Return all card IDs of the deck
-    public Vector<String> getDeckCardsIds(int userID ){
-        try{
-            String getCardsQuery = "Select * from decks where fk_decks_user_id = ?";
-            PreparedStatement getCardsStmt = unitOfWork.prepareStatement(getCardsQuery);
-            getCardsStmt.setInt(1, userID);
-            ResultSet ResultSet = getCardsStmt.executeQuery();
-            Vector<String> cardIDs = new Vector<>();
-            while(ResultSet.next()){
-                String currentCardID = ResultSet.getString("fk_decks_card_id");
-                cardIDs.add(currentCardID);
+    public Vector<String> getDeckCardsIds(int userID) {
+        Vector<String> cardIDs = new Vector<>();
+        String query = "SELECT * FROM decks WHERE fk_decks_user_id = ?";
+
+        try (PreparedStatement stmt = unitOfWork.prepareStatement(query)) {
+            stmt.setInt(1, userID);
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next()) {
+                cardIDs.add(resultSet.getString("fk_decks_card_id"));
             }
-            return cardIDs;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return cardIDs;
     }
 
-    // Get all cards of the deck of the user
-    public List<Card> getDeck(String username)  {
-        try {
+    // Get all cards of the user's deck
+    public List<Card> getDeck(String username) {
+        List<Card> allDeckCards = new ArrayList<>();
 
+        try {
             CardRepository cardRepository = new CardRepository(new UnitOfWork());
             UserRepository userRepository = new UserRepository(new UnitOfWork());
             int userID = userRepository.getUserID(username);
-            // grabs the card ids of the deck
-            Vector<String> deckCardsIds = getDeckCardsIds(userID);
-            int len = deckCardsIds.size();
 
-            // creates a vector to store all the deck cards
-            Vector<Card> allDeckCards = new Vector<Card>();
-            // iterates through the deck card ids and gets the card data
-            for (int i = 0; i < len; i++) {
-                Card card = cardRepository.getCardData(deckCardsIds.get(i));
-                allDeckCards.add(card);
+            Vector<String> deckCardIds = getDeckCardsIds(userID);
+
+            for (String cardId : deckCardIds) {
+                allDeckCards.add(cardRepository.getCardData(cardId));
             }
-
-            // returnt die Deck Karten
-            return allDeckCards;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return allDeckCards;
     }
 
     public boolean configureDeck(String username, Vector<String> cardsToConfigure) {
         UserRepository userRepository = new UserRepository(new UnitOfWork());
         int userID = userRepository.getUserID(username);
 
-        getDeckCardsIds(userID);
-
-        int cardIdsLength = cardsToConfigure.size();
         try {
-            for (int i = 0; i < cardIdsLength; i++) {
-                String cardsIntoDeckQuery = "INSERT INTO \"decks\" (fk_decks_user_id, fk_decks_card_id) VALUES (?, ?)";
-                PreparedStatement pstmt = unitOfWork.prepareStatement(cardsIntoDeckQuery);
-                pstmt.setInt(1, userID);
-                pstmt.setString(2, cardsToConfigure.get(i));
-                unitOfWork.registerNew(pstmt);
+            for (String cardId : cardsToConfigure) {
+                String query = "INSERT INTO decks (fk_decks_user_id, fk_decks_card_id) VALUES (?, ?)";
+                PreparedStatement stmt = unitOfWork.prepareStatement(query);
+                stmt.setInt(1, userID);
+                stmt.setString(2, cardId);
+                unitOfWork.registerNew(stmt);
             }
             unitOfWork.commitTransaction();
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             unitOfWork.rollbackTransaction();
         }
         return false;
     }
 
+    // Check if the user owns all cards provided
+    public boolean checkProvidedCardsWithAcquiredCardsInDB(int userID, Vector<String> cardsToProcess) {
+        int matchingCards = 0;
 
-
-    // Check if the user owns all cards that are provided in the body
-    public boolean checkProvidedCardsWithAcquiredCardsInDB(int userID, Vector<String> cardsToConfigure){
         try {
-            // 4 cards are provided
-            int cardLength = cardsToConfigure.size();
-            // acquired cards and cards in the body
-            int cardsInDbAndConfiguration = 0;
-            for (int i = 0; i < cardLength; i++) {
-                String currentCardID = cardsToConfigure.get(i);
+            for (String cardId : cardsToProcess) {
+                String query = "SELECT * FROM acquired_cards WHERE fk_acquired_cards_user_id = ?";
+                try (PreparedStatement stmt = unitOfWork.prepareStatement(query)) {
+                    stmt.setInt(1, userID);
+                    ResultSet resultSet = stmt.executeQuery();
 
-                String getCardsQuery = "SELECT * FROM \"acquired_cards\" where fk_acquired_cards_user_id = ?";
-                PreparedStatement getCardsStmt = unitOfWork.prepareStatement(getCardsQuery);
-                getCardsStmt.setInt(1, userID);
-                ResultSet resultSet = getCardsStmt.executeQuery();
-
-                while (resultSet.next()){
-                    String DatabaseCard = resultSet.getString("fk_acquired_cards_card_id");
-
-                    if (DatabaseCard.equals(currentCardID)){
-                        // if the card in the body is the same as the card in the database then increment the counter
-                        cardsInDbAndConfiguration++;
+                    while (resultSet.next()) {
+                        if (resultSet.getString("fk_acquired_cards_card_id").equals(cardId)) {
+                            matchingCards++;
+                        }
                     }
                 }
             }
-            // if player has all cards then return true
-            return cardsInDbAndConfiguration == (cardsToConfigure.size());
-
-        }catch (Exception e){
+            return matchingCards == cardsToProcess.size();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    // Delete the deck of the user
-    public void deleteUserDeck(int userID){
-        try {
-            String query = "Delete From \"decks\" where fk_decks_user_id = ?";
-            PreparedStatement pstmt = unitOfWork.prepareStatement(query);
-            pstmt.setInt(1, userID);
-            pstmt.executeUpdate();
+    // Delete the user's deck
+    public void deleteUserDeck(int userID) {
+        String query = "DELETE FROM decks WHERE fk_decks_user_id = ?";
 
-        }catch (Exception e){
+        try (PreparedStatement stmt = unitOfWork.prepareStatement(query)) {
+            stmt.setInt(1, userID);
+            stmt.executeUpdate();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     // Returns the cards in the form of a JSON
     public List<String> createJsonForAllCards(List<Card> allCards) {
         List<String> jsonList = new ArrayList<>();
 
         for (Card card : allCards) {
-
             StringBuilder jsonBuilder = new StringBuilder("\n{");
             jsonBuilder.append("\"id\": \"").append(card.getID()).append("\",");
             jsonBuilder.append("\"name\": \"").append(card.getName()).append("\",");
-            jsonBuilder.append("\"damage\": ").append(card.getDamage());
-            jsonBuilder.append("\"element\": ").append(card.getElement());
+            jsonBuilder.append("\"damage\": ").append(card.getDamage()).append(",");
+            jsonBuilder.append("\"element\": \"").append(card.getElement()).append("\"");
             jsonBuilder.append("}");
             jsonList.add(jsonBuilder.toString());
         }
 
         return jsonList;
     }
-
 }

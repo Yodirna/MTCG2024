@@ -2,7 +2,7 @@ package at.fhtw;
 
 import at.fhtw.httpserver.server.Server;
 import at.fhtw.httpserver.utils.Router;
-import at.fhtw.mtcg.controllers.*;
+import at.fhtw.mtcg.services.*;
 
 import java.io.IOException;
 
@@ -20,17 +20,17 @@ public class Main {
     private static Router configureRouter()
     {
         Router router = new Router();
-        router.addService("/users", new UserController());
-        router.addService("/sessions", new SessionController());
-        router.addService("/packages", new PackageController());
-        router.addService("/transactions", new PackageAcquisitionController());
-        router.addService("/cards", new CardController());
-        router.addService("/deck", new DeckController());
-        router.addService("/battles", new FightController());
-        router.addService("/stats", new StatsController());
-        router.addService("/scoreboard", new ScoreboardController());
-        router.addService("/tradings", new TradingController());
-        router.addService("/rewards", new RewardController());
+        router.addService("/users", new UserService());
+        router.addService("/sessions", new SessionsService());
+        router.addService("/packages", new PackagesService());
+        router.addService("/transactions", new PackageAcquisitionService());
+        router.addService("/cards", new CardsService());
+        router.addService("/deck", new DeckService());
+        router.addService("/battles", new LobbyService());
+        router.addService("/stats", new StatsService());
+        router.addService("/scoreboard", new ScoreboardService());
+        router.addService("/tradings", new TradingService());
+        router.addService("/rewards", new RewardsService());
 
         return router;
     }

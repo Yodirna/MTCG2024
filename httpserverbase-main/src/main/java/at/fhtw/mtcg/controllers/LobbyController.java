@@ -1,31 +1,31 @@
-package at.fhtw.mtcg.services;
+package at.fhtw.mtcg.controllers;
 
 import at.fhtw.httpserver.httpconfig.ContentType;
 import at.fhtw.httpserver.httpconfig.HttpStatus;
 import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
 import at.fhtw.mtcg.models.Card;
-import at.fhtw.mtcg.models.Game;
+import at.fhtw.mtcg.models.GameLogic;
 import at.fhtw.mtcg.models.User;
 import at.fhtw.mtcg.security.Token;
 import at.fhtw.mtcg.database.UnitOfWork;
-import at.fhtw.mtcg.database.repository.BattleRepository;
+import at.fhtw.mtcg.database.repository.FightRepository;
 import at.fhtw.mtcg.database.repository.DeckRepository;
 
 import java.util.*;
 
-import static at.fhtw.mtcg.cards.CardToClassMapper.createRealCard;
+import static at.fhtw.mtcg.cards.CardRegistry.createRealCard;
 
 
-public class FightService {
-    private BattleRepository fightRepository;
+public class LobbyController {
+    private FightRepository fightRepository;
     private static final List<User> lobby = Collections.synchronizedList(new ArrayList<>());
     private static final Object lock = new Object();
     public static final List<Request> requests = Collections.synchronizedList(new ArrayList<>());
     private final Map<Request, Response> pendingResponses = new HashMap<>();
 
-    public FightService() {
-        fightRepository = new BattleRepository(new UnitOfWork());
+    public LobbyController() {
+        fightRepository = new FightRepository(new UnitOfWork());
 
     }
 
@@ -81,7 +81,7 @@ public class FightService {
 
     public String startBattle(User player1, User player2) {
         try{
-            Game game = new Game();
+            GameLogic gameLogic = new GameLogic();
 
             // Save all the data of the player in the model, so card stack etc.
             player1 = createUserModel("kienboec", player1);
@@ -89,8 +89,8 @@ public class FightService {
 
             // 4 rounds of fighting, each card 1 round
             for (int i = 0; i<4; i++) {
-                game.addLogEntry("Runde " + i + ": ");
-                game.fight(player1.getStack().get(i), player2.getStack().get(i));
+                gameLogic.addLogEntry("Runde " + i + ": ");
+                gameLogic.fight(player1.getStack().get(i), player2.getStack().get(i));
 
             }
 
@@ -107,7 +107,7 @@ public class FightService {
                 player2HP += card.getHp();
             }
 
-            List<String> battleLogs = game.getBattleLog();
+            List<String> battleLogs = gameLogic.getBattleLog();
             StringBuilder sb = new StringBuilder();
             for(String logEntry : battleLogs) {
                 sb.append(logEntry);
@@ -138,10 +138,10 @@ public class FightService {
     public boolean doPostGameUpdates(User winner, User loser){
         UnitOfWork unitOfWork = new UnitOfWork();
         try {
-            BattleRepository battleRepository = new BattleRepository(unitOfWork);
-            battleRepository.updateWinnerStats(winner.getUsername(), unitOfWork);
-            battleRepository.updateLoserStats(loser.getUsername(), unitOfWork);
-            battleRepository.winnerTakesLoserCards(winner.getUsername(), loser.getUsername(), unitOfWork);
+            FightRepository fightRepository = new FightRepository(unitOfWork);
+            fightRepository.updateWinnerStats(winner.getUsername(), unitOfWork);
+            fightRepository.updateLoserStats(loser.getUsername(), unitOfWork);
+            fightRepository.winnerTakesLoserCards(winner.getUsername(), loser.getUsername(), unitOfWork);
             unitOfWork.commitTransaction();
             return true;
         }catch (Exception e){

@@ -1,6 +1,6 @@
 package at;
 
-import at.fhtw.mtcg.cards.CardToClassMapper;
+import at.fhtw.mtcg.cards.CardRegistry;
 import at.fhtw.mtcg.cards.Monsters.Dragons.FireDragon;
 import at.fhtw.mtcg.cards.Monsters.Dragons.NormalDragon;
 import at.fhtw.mtcg.cards.Monsters.Dragons.WaterDragon;
@@ -22,7 +22,7 @@ import at.fhtw.mtcg.cards.Spells.FireSpell;
 import at.fhtw.mtcg.cards.Spells.NormalSpell;
 import at.fhtw.mtcg.cards.Spells.WaterSpell;
 import at.fhtw.mtcg.models.Card;
-import at.fhtw.mtcg.models.Game;
+import at.fhtw.mtcg.models.GameLogic;
 import at.fhtw.mtcg.security.Hash;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class Tests {
 
-    Game Game = new Game();
+    GameLogic GameLogic = new GameLogic();
 
     @Test
     public void testSpellsWithSameElement_water(){
@@ -41,7 +41,7 @@ public class Tests {
         WaterSpell waterSpell_2 = new WaterSpell();
         int waterspell_1HP = waterSpell_1.getHp();
         int waterspell_2HP = waterSpell_2.getHp();
-        Game.fight(waterSpell_1, waterSpell_2);
+        GameLogic.fight(waterSpell_1, waterSpell_2);
         int waterspell_1AfterHP = waterSpell_1.getHp();
         int waterspell_2AfterHP = waterSpell_2.getHp();
         assertEquals(waterspell_1HP, waterspell_1AfterHP, "Water Spell 1 hat damage bekommen");
@@ -54,7 +54,7 @@ public class Tests {
         FireSpell fireSpell_2 = new FireSpell();
         int fireSpell_1HP = fireSpell_1.getHp();
         int fireSpell_2HP = fireSpell_2.getHp();
-        Game.fight(fireSpell_1, fireSpell_2);
+        GameLogic.fight(fireSpell_1, fireSpell_2);
         int fireSpell_1AfterHP = fireSpell_1.getHp();
         int fireSpell_2AfterHP = fireSpell_2.getHp();
         assertEquals(fireSpell_1HP, fireSpell_1AfterHP, "Water Spell 1 hat damage bekommen");
@@ -67,7 +67,7 @@ public class Tests {
         NormalSpell normalSpell_2 = new NormalSpell();
         int normalSpell_1HP = normalSpell_1.getHp();
         int normalSpell_2HP = normalSpell_2.getHp();
-        Game.fight(normalSpell_1, normalSpell_2);
+        GameLogic.fight(normalSpell_1, normalSpell_2);
         int normalSpell_1AfterHP = normalSpell_1.getHp();
         int normalSpell_2AfterHP = normalSpell_2.getHp();
         assertEquals(normalSpell_1HP, normalSpell_1AfterHP, "Water Spell 1 hat damage bekommen");
@@ -81,7 +81,7 @@ public class Tests {
         FireSpell fireSpell = new FireSpell();
         int fireSpellMaxHp = fireSpell.getHp();
         int waterSpellMaxHp = waterSpell.getHp();
-        Game.fight(waterSpell, fireSpell);
+        GameLogic.fight(waterSpell, fireSpell);
         assertEquals(fireSpell.getHp(), (fireSpellMaxHp - (waterSpell.getDamage()*2)),
                 "Schaden von Water Spell nicht verdoppelt");
 
@@ -97,7 +97,7 @@ public class Tests {
         int normalSpellMaxHp = normalSpell.getHp();
         int fireSpellMaxHp = fireSpell.getHp();
 
-        Game.fight(fireSpell, normalSpell);
+        GameLogic.fight(fireSpell, normalSpell);
         assertEquals(normalSpell.getHp(), (normalSpellMaxHp - (fireSpell.getDamage()*2)),
                 "Schaden von Fire Spell nicht verdoppelt");
 
@@ -111,7 +111,7 @@ public class Tests {
         int waterGoblinMaxHp = waterGoblin.getHp();
         int normalSpellMaxHp = normalSpell.getHp();
 
-        Game.fight(normalSpell, waterGoblin);
+        GameLogic.fight(normalSpell, waterGoblin);
         assertEquals(waterGoblin.getHp(), (waterGoblinMaxHp - (normalSpell.getDamage()*2)),
                 "Schaden von Normal Spell nicht verdoppelt");
 
@@ -126,7 +126,7 @@ public class Tests {
         FireWizard fireWizard = new FireWizard();
         int fireWizzardMaxHp = fireWizard.getHp();
         int waterSpellMaxHp = waterSpell.getHp();
-        Game.fight(waterSpell, fireWizard);
+        GameLogic.fight(waterSpell, fireWizard);
         assertEquals(fireWizard.getHp(), (fireWizzardMaxHp - (waterSpell.getDamage()*2)),
                 "Schaden von Water Spell nicht verdoppelt");
 
@@ -140,7 +140,7 @@ public class Tests {
         int normalKnightMaxHp = normalKnight.getHp();
         int fireSpellMaxHp = fireSpell.getHp();
 
-        Game.fight(fireSpell, normalKnight);
+        GameLogic.fight(fireSpell, normalKnight);
         assertEquals(normalKnight.getHp(), (normalKnightMaxHp - (fireSpell.getDamage()*2)),
                 "Schaden von Fire Spell nicht verdoppelt");
 
@@ -154,7 +154,7 @@ public class Tests {
         int waterSpellMaxHp = waterSpell.getHp();
         int normalSpellMaxHp = normalSpell.getHp();
 
-        Game.fight(normalSpell, waterSpell);
+        GameLogic.fight(normalSpell, waterSpell);
         assertEquals(waterSpell.getHp(), (waterSpellMaxHp - (normalSpell.getDamage()*2)),
                 "Schaden von Normal Spell nicht verdoppelt");
 
@@ -169,13 +169,13 @@ public class Tests {
         FireDragon fireDragon = new FireDragon();
 
         int fireElfMaxHP = fireElf.getHp();
-        Game.fight(fireElf, waterDragon);
+        GameLogic.fight(fireElf, waterDragon);
         assertEquals(fireElfMaxHP, fireElf.getHp(), "FireElf took damage from WaterDragon!");
 
-        Game.fight(fireElf, fireDragon);
+        GameLogic.fight(fireElf, fireDragon);
         assertEquals(fireElf.getHp(), fireElfMaxHP, "FireElf took damage from FireDragon!");
 
-        Game.fight(fireElf, normalDragon);
+        GameLogic.fight(fireElf, normalDragon);
         assertEquals(fireElf.getHp(), fireElfMaxHP, "FireElf took damage from NormalDragon!");
     }
 
@@ -187,13 +187,13 @@ public class Tests {
         WaterOrk waterOrk = new WaterOrk();
         int wizzardMaxHP = fireWizard.getHp();
         //gegen feuer ork
-        Game.fight(fireOrk, fireWizard);
+        GameLogic.fight(fireOrk, fireWizard);
         assertEquals(fireWizard.getHp(), wizzardMaxHP, "Fire Wizzard took damage from Fire Ork!");
         //gegen normal ork
-        Game.fight(normalOrk, fireWizard);
+        GameLogic.fight(normalOrk, fireWizard);
         assertEquals(fireWizard.getHp(), wizzardMaxHP, "Fire Wizzard took damage from normal Ork!");
         // gegen wasser ork
-        Game.fight(waterOrk, fireWizard);
+        GameLogic.fight(waterOrk, fireWizard);
         assertEquals(fireWizard.getHp(), wizzardMaxHP, "Fire Wizzard took damage from water Ork!");
     }
     @Test
@@ -204,13 +204,13 @@ public class Tests {
         WaterOrk waterOrk = new WaterOrk();
         int wizzardMaxHP = waterWizard.getHp();
         //gegen feuer ork
-        Game.fight(fireOrk, waterWizard);
+        GameLogic.fight(fireOrk, waterWizard);
         assertEquals(waterWizard.getHp(), wizzardMaxHP, "Water Wizzard took damage from Fire Ork!");
         //gegen normal ork
-        Game.fight(normalOrk, waterWizard);
+        GameLogic.fight(normalOrk, waterWizard);
         assertEquals(waterWizard.getHp(), wizzardMaxHP, "Water Wizzard took damage from normal Ork!");
         // gegen wasser ork
-        Game.fight(waterOrk, waterWizard);
+        GameLogic.fight(waterOrk, waterWizard);
         assertEquals(waterWizard.getHp(), wizzardMaxHP, "Water Wizzard took damage from water Ork!");
     }
 
@@ -222,13 +222,13 @@ public class Tests {
         WaterOrk waterOrk = new WaterOrk();
         int wizzardMaxHP = normalWizard.getHp();
         //gegen feuer ork
-        Game.fight(fireOrk, normalWizard);
+        GameLogic.fight(fireOrk, normalWizard);
         assertEquals(normalWizard.getHp(), wizzardMaxHP, "Normal Wizzard took damage from Fire Ork!");
         //gegen normal ork
-        Game.fight(normalOrk, normalWizard);
+        GameLogic.fight(normalOrk, normalWizard);
         assertEquals(normalWizard.getHp(), wizzardMaxHP, "Normal Wizzard took damage from normal Ork!");
         // gegen wasser ork
-        Game.fight(waterOrk, normalWizard);
+        GameLogic.fight(waterOrk, normalWizard);
         assertEquals(normalWizard.getHp(), wizzardMaxHP, "Normal Wizzard took damage from water Ork!");
     }
     @Test
@@ -241,13 +241,13 @@ public class Tests {
         int normalDragonMaxHP = normalDragon.getHp();
         int fireDragonMaxHP = fireDragon.getHp();
 
-        Game.fight(waterGoblin, waterDragon);
+        GameLogic.fight(waterGoblin, waterDragon);
         assertEquals(waterDragonMaxHP, waterDragon.getHp(), "Water Dragon took Damage");
 
-        Game.fight(waterGoblin, normalDragon);
+        GameLogic.fight(waterGoblin, normalDragon);
         assertEquals(normalDragonMaxHP, normalDragon.getHp(), "normal Dragon took Damage");
 
-        Game.fight(waterGoblin, fireDragon);
+        GameLogic.fight(waterGoblin, fireDragon);
         assertEquals(fireDragonMaxHP, fireDragon.getHp(), "fire Dragon took Damage");
     }
     @Test
@@ -260,13 +260,13 @@ public class Tests {
         int normalDragonMaxHP = normalDragon.getHp();
         int fireDragonMaxHP = fireDragon.getHp();
 
-        Game.fight(fireGoblin, waterDragon);
+        GameLogic.fight(fireGoblin, waterDragon);
         assertEquals(waterDragonMaxHP, waterDragon.getHp(), "Water Dragon took Damage");
 
-        Game.fight(fireGoblin, normalDragon);
+        GameLogic.fight(fireGoblin, normalDragon);
         assertEquals(normalDragonMaxHP, normalDragon.getHp(), "Normal Dragon took Damage");
 
-        Game.fight(fireGoblin, fireDragon);
+        GameLogic.fight(fireGoblin, fireDragon);
         assertEquals(fireDragonMaxHP, fireDragon.getHp(), "Fire Dragon took Damage");
     }
     @Test
@@ -279,30 +279,30 @@ public class Tests {
         int normalDragonMaxHP = normalDragon.getHp();
         int fireDragonMaxHP = fireDragon.getHp();
 
-        Game.fight(normalGoblin, waterDragon);
+        GameLogic.fight(normalGoblin, waterDragon);
         assertEquals(waterDragonMaxHP, waterDragon.getHp(), "Water Dragon took Damage");
 
-        Game.fight(normalGoblin, normalDragon);
+        GameLogic.fight(normalGoblin, normalDragon);
         assertEquals(normalDragonMaxHP, normalDragon.getHp(), "Normal Dragon took Damage");
 
-        Game.fight(normalGoblin, fireDragon);
+        GameLogic.fight(normalGoblin, fireDragon);
         assertEquals(fireDragonMaxHP, fireDragon.getHp(), "Fire Dragon took Damage");
     }
     @Test
     public void AllKnightsDrownAgainstWaterSpell(){
-        Game Game = new Game();
+        GameLogic GameLogic = new GameLogic();
         WaterSpell waterSpell = new WaterSpell();
         WaterKnight waterKnight = new WaterKnight();
         NormalKnight normalKnight = new NormalKnight();
         FireKnight fireKnight = new FireKnight();
 
-        Game.fight(waterSpell, waterKnight);
+        GameLogic.fight(waterSpell, waterKnight);
         assertEquals(0, waterKnight.getHp(), "Water Knight did not Die!");
 
-        Game.fight(waterSpell, normalKnight);
+        GameLogic.fight(waterSpell, normalKnight);
         assertEquals(0, normalKnight.getHp(), "Normal Knight did not Die!");
 
-        Game.fight(waterSpell, fireKnight);
+        GameLogic.fight(waterSpell, fireKnight);
         assertEquals(0, fireKnight.getHp(), "Fire Knight did not Die!");
     }
 
@@ -314,13 +314,13 @@ public class Tests {
         NormalSpell normalSpell = new NormalSpell();
         int krakenMaxHP = kraken.getHp();
 
-        Game.fight(kraken, fireSpell);
+        GameLogic.fight(kraken, fireSpell);
         assertEquals(krakenMaxHP, kraken.getHp(), "Kraken immunity test failed against fireSpell");
 
-        Game.fight(kraken, waterSpell);
+        GameLogic.fight(kraken, waterSpell);
         assertEquals(krakenMaxHP, kraken.getHp(), "Kraken immunity test failed against waterSpell");
 
-        Game.fight(kraken, normalSpell);
+        GameLogic.fight(kraken, normalSpell);
         assertEquals(krakenMaxHP, kraken.getHp(), "Kraken immunity test failed against normalSpell");
     }
 
@@ -338,10 +338,10 @@ public class Tests {
     }
 
     @Test void checkCardToClassMapper(){
-        CardToClassMapper cardToClassMapper = new CardToClassMapper();
+        CardRegistry cardRegistry = new CardRegistry();
         Card card = new Card("WaterGoblin", Card.Elements.Water, 20, 100);
         Class cardClassBefore = card.getClass();
-        card = cardToClassMapper.createRealCard(card);
+        card = cardRegistry.createRealCard(card);
         Class cardClassAfter = card.getClass();
         // die klasse sollte sich ändern und deswegen assertfalse
         assertFalse(cardClassBefore == cardClassAfter, "Fehlgeschalgen");

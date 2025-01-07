@@ -6,21 +6,19 @@ import at.fhtw.httpserver.httpconfig.Method;
 import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
 import at.fhtw.httpserver.server.RestController;
-import at.fhtw.mtcg.controllers.DeckController;
+import at.fhtw.mtcg.controllers.SessionController;
 
-public class DeckService implements RestController {
-    private final DeckController deckController;
+public class SessionsService implements RestController {
+    private final SessionController sessionController;
 
-    public DeckService() {
-        this.deckController = new DeckController();
+    public SessionsService() {
+        this.sessionController = new SessionController();
     }
 
     @Override
     public Response handleRequest(Request request) {
-        if (request.getMethod() == Method.GET) {
-            return this.deckController.handleGetReq(request);
-        } else if (request.getMethod() == Method.PUT) {
-            return this.deckController.handlePutReq(request);
+        if (request.getMethod() == Method.POST) {
+            return this.sessionController.handlePostRequest(request);
         }
 
         return new Response(
@@ -29,5 +27,6 @@ public class DeckService implements RestController {
                 "[]"
         );
     }
+
 
 }

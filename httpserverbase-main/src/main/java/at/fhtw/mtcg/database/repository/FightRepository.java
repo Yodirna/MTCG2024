@@ -5,10 +5,10 @@ import at.fhtw.mtcg.database.UnitOfWork;
 import java.sql.PreparedStatement;
 import java.util.Vector;
 
-public class BattleRepository {
+public class FightRepository {
 
     private UnitOfWork unitOfWork;
-    public BattleRepository(UnitOfWork unitOfWork){
+    public FightRepository(UnitOfWork unitOfWork){
         this.unitOfWork = unitOfWork;
     }
 

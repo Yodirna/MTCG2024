@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class simulates a game where Cards fight each other.
+ * This class handles all the battle logic between cards.
  * It covers spell vs. spell, spell vs. monster, and monster vs. monster scenarios,
  * including special cases and conditions.
  */
-public class Game {
+public class GameLogic {
 
     // Holds the logs of all battle events
     private final List<String> battleLog = new ArrayList<>();
@@ -29,8 +29,6 @@ public class Game {
 
     /**
      * Adds a message entry to the battle log.
-     *
-     * @param message The log entry to add.
      */
     public void addLogEntry(String message) {
         battleLog.add(message);
@@ -45,7 +43,7 @@ public class Game {
 
     /**
      * Prints all events that occurred during the battle to the console.
-     * NOT IN USE CURRENTLY!
+     * NOT IN USE CURRENTLY! (for debugging purposes)
      */
     public void printBattleLog() {
         System.out.println("Battle Log:");
@@ -61,24 +59,24 @@ public class Game {
     /**
      * Initiates a fight between two cards.
      *
-     * @param card1 the first card in the fight.
-     * @param card2 the second card in the fight.
+     * @param firstCard the first card in the fight.
+     * @param secondCard the second card in the fight.
      */
-    public void fight(Card card1, Card card2) {
+    public void fight(Card firstCard, Card secondCard) {
         // If both cards are spells: Spell vs. Spell
-        if (card1 instanceof Spell && card2 instanceof Spell) {
-            spellVsSpellFight(card1, card2);
+        if (firstCard instanceof Spell && secondCard instanceof Spell) {
+            spellVsSpellFight(firstCard, secondCard);
             addLogEntry("\n");
             return;
         }
 
         // If one of them is a spell: Spell vs. Monster
-        if (card1 instanceof Spell || card2 instanceof Spell) {
-            spellVsMonsterFight(card1, card2);
+        if (firstCard instanceof Spell || secondCard instanceof Spell) {
+            spellVsMonsterFight(firstCard, secondCard);
             addLogEntry("\n");
         } else {
             // Otherwise, Monster vs. Monster
-            monsterVsMonsterFight(card1, card2);
+            monsterVsMonsterFight(firstCard, secondCard);
             addLogEntry("\n");
         }
     }
@@ -119,6 +117,7 @@ public class Game {
 
     /**
      * Determines the disadvantage/advantage for two spells based on their elements.
+     * YOU CAN FIND THIS LEGEND IN THE DOCUMENTATION AS WELL!
      *
      * @param card1 the first spell card.
      * @param card2 the second spell card.
@@ -162,7 +161,7 @@ public class Game {
      * ------------------------------------------------------------------------- */
 
     /**
-     * Handles a fight scenario where one card is a spell and the other is a monster.
+     * Fight scenario -> where one card is a spell and the other is a monster.
      *
      * @param card1 the first card.
      * @param card2 the second card.
@@ -209,6 +208,7 @@ public class Game {
 
     /**
      * Determines the disadvantage/advantage/special cases for a spell vs. monster fight.
+     * YOU CAN FIND THIS LEGEND IN THE DOCUMENTATION AS WELL!
      *
      * @param card1 the first card.
      * @param card2 the second card.
@@ -220,6 +220,7 @@ public class Game {
      *         3 -> Kraken special case (immune to spells),
      *         4 -> Knight vs. WaterSpell special case,
      *         5 -> General error case (no recognized condition).
+     *
      */
     public int spellVsMonster(Card card1, Card card2) {
         // Kraken immunity
